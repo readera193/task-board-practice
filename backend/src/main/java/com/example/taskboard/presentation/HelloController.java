@@ -10,6 +10,6 @@ public class HelloController {
 
     @GetMapping("/hello")
     public String hello() {
-        return "H1231elloewsrdcgydgyhj6tujnt6yf Spring SDFBoot!";
+        return "Hello Spring Boot DevTools!";
     }
 }

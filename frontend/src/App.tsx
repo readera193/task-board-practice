@@ -1,17 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { getHello } from './api/helloApi'
+import { handleError } from './utils/handleError'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [message, setMessage] = useState('')
+
+  useEffect(() => {
+    getHello()
+      .then(setMessage)
+      .catch(handleError)
+  }, [])
 
   return (
     <main>
-      <h1>My Task Board</h1>
-
-      <p>Frontend development environment is ready.</p>
-
-      <button onClick={() => setCount(count + 1)}>
-        Clicked {count} times
-      </button>
+      <h1>Task Board</h1>
+      <p>{message}</p>
     </main>
   )
 }
