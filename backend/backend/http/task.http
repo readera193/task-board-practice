@@ -1,1 +1,27 @@
-﻿
+﻿### Get all tasks
+GET http://localhost:8080/api/tasks
+
+
+### Create task
+POST http://localhost:8080/api/tasks
+Content-Type: application/json
+
+{
+  "title": "學習 Spring Boot"
+}
+
+
+### Get task by id
+GET http://localhost:8080/api/tasks/1
+
+
+### Toggle task
+PATCH http://localhost:8080/api/tasks/1/toggle
+
+
+### Delete task
+DELETE http://localhost:8080/api/tasks/1
+
+
+### Get missing task
+GET http://localhost:8080/api/tasks/999

@@ -1,4 +1,4 @@
-﻿package com.example.taskboard.shared.exception;
+package com.example.taskboard.shared.exception;
 
 public class BusinessException extends RuntimeException {
 

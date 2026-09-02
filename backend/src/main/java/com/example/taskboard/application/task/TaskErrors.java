@@ -1,4 +1,4 @@
-﻿package com.example.taskboard.application.task;
+package com.example.taskboard.application.task;
 
 import com.example.taskboard.shared.result.AppError;
 

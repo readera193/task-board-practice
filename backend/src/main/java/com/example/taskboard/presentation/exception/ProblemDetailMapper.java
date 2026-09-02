@@ -1,4 +1,4 @@
-﻿package com.example.taskboard.presentation.exception;
+package com.example.taskboard.presentation.exception;
 
 import com.example.taskboard.shared.result.AppError;
 import org.springframework.http.HttpStatus;

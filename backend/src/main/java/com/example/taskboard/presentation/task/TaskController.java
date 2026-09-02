@@ -1,4 +1,4 @@
-﻿package com.example.taskboard.presentation.task;
+package com.example.taskboard.presentation.task;
 
 import com.example.taskboard.application.task.CreateTaskRequest;
 import com.example.taskboard.application.task.TaskService;
@@ -18,17 +18,26 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<?> getAll() {
-        return ResultResponse.from(
-                taskService.getAll()
-        );
+        return ResultResponse.from(taskService.getAll());
     }
 
     @PostMapping
-    public ResponseEntity<?> create(
-            @RequestBody CreateTaskRequest request
-    ) {
-        return ResultResponse.from(
-                taskService.create(request)
-        );
+    public ResponseEntity<?> create(@RequestBody CreateTaskRequest request) {
+        return ResultResponse.from(taskService.create(request));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        return ResultResponse.from(taskService.getById(id));
+    }
+
+    @PatchMapping("/{id}/toggle")
+    public ResponseEntity<?> toggle(@PathVariable Long id) {
+        return ResultResponse.from(taskService.toggle(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        return ResultResponse.noContent(taskService.delete(id));
     }
 }

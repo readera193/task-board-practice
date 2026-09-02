@@ -1,4 +1,4 @@
-﻿package com.example.taskboard.domain.task;
+package com.example.taskboard.domain.task;
 
 import java.time.LocalDateTime;
 

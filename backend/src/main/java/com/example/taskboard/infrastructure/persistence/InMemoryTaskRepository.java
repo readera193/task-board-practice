@@ -1,4 +1,4 @@
-﻿package com.example.taskboard.infrastructure.persistence;
+package com.example.taskboard.infrastructure.persistence;
 
 import com.example.taskboard.application.task.TaskRepository;
 import com.example.taskboard.domain.task.Task;
