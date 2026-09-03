@@ -1,13 +1,28 @@
 package com.example.taskboard.domain.task;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "tasks")
 public class Task {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
     private boolean completed;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    protected Task() {
+    }
 
     public Task(
             Long id,

@@ -3,7 +3,7 @@ package com.example.taskboard.application.task;
 import com.example.taskboard.domain.task.Task;
 import com.example.taskboard.shared.result.Result;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +42,7 @@ public class TaskService {
                 .orElseGet(() -> Result.failure(TaskErrors.NOT_FOUND));
     }
 
+    @Transactional
     public Result<TaskDto> toggle(Long id) {
         Optional<Task> optionalTask = taskRepository.findById(id);
 
