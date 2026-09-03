@@ -17,33 +17,30 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public Result<TaskDto> create(CreateTaskRequest request) {
+    @Transactional
+    public Result<TaskResult> create(String title) {
 
-        if (request.title() == null || request.title().isBlank()) {
-            return Result.failure(TaskErrors.INVALID_TITLE);
-        }
-
-        Task task = new Task(null, request.title().trim(), false, LocalDateTime.now());
+        Task task = new Task(null, title.trim(), false, LocalDateTime.now());
 
         Task savedTask = taskRepository.save(task);
 
-        return Result.success(TaskDto.from(savedTask));
+        return Result.success(TaskResult.from(savedTask));
     }
 
-    public Result<List<TaskDto>> getAll() {
+    public Result<List<TaskResult>> getAll() {
 
-        List<TaskDto> tasks = taskRepository.findAll().stream().map(TaskDto::from).toList();
+        List<TaskResult> tasks = taskRepository.findAll().stream().map(TaskResult::from).toList();
 
         return Result.success(tasks);
     }
 
-    public Result<TaskDto> getById(Long id) {
-        return taskRepository.findById(id).map(task -> Result.success(TaskDto.from(task)))
+    public Result<TaskResult> getById(Long id) {
+        return taskRepository.findById(id).map(task -> Result.success(TaskResult.from(task)))
                 .orElseGet(() -> Result.failure(TaskErrors.NOT_FOUND));
     }
 
     @Transactional
-    public Result<TaskDto> toggle(Long id) {
+    public Result<TaskResult> toggle(Long id) {
         Optional<Task> optionalTask = taskRepository.findById(id);
 
         if (optionalTask.isEmpty()) {
@@ -54,7 +51,7 @@ public class TaskService {
 
         task.toggle();
 
-        return Result.success(TaskDto.from(task));
+        return Result.success(TaskResult.from(task));
     }
 
     public Result<Void> delete(Long id) {

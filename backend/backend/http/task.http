@@ -26,13 +26,19 @@ DELETE http://localhost:8080/api/tasks/1
 ### Get missing task
 GET http://localhost:8080/api/tasks/999
 
-### Create
+### Invalid - blank title
 POST http://localhost:8080/api/tasks
 Content-Type: application/json
 
 {
-  "title": "測試 Dirty Checking"
+  "title": ""
 }
 
-### Toggle
-PATCH http://localhost:8080/api/tasks/1/toggle
+
+### Invalid - title too long
+POST http://localhost:8080/api/tasks
+Content-Type: application/json
+
+{
+  "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}

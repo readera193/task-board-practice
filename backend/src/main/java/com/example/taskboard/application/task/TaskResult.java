@@ -4,15 +4,15 @@ import com.example.taskboard.domain.task.Task;
 
 import java.time.LocalDateTime;
 
-public record TaskDto(
+public record TaskResult(
         Long id,
         String title,
         boolean completed,
         LocalDateTime createdAt
 ) {
 
-    public static TaskDto from(Task task) {
-        return new TaskDto(
+    public static TaskResult from(Task task) {
+        return new TaskResult(
                 task.getId(),
                 task.getTitle(),
                 task.isCompleted(),

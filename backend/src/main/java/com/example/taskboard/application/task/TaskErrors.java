@@ -13,9 +13,4 @@ public final class TaskErrors {
                     "找不到指定的待辦事項"
             );
 
-    public static final AppError INVALID_TITLE =
-            new AppError(
-                    "TASK_INVALID_TITLE",
-                    "待辦事項標題不可為空"
-            );
 }

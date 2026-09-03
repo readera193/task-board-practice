@@ -3,7 +3,9 @@ package com.example.taskboard.presentation.exception;
 import com.example.taskboard.shared.exception.BusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.validation.FieldError;
 import org.springframework.web.ErrorResponseException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -37,6 +39,21 @@ public class GlobalExceptionHandler {
 
         problemDetail.setTitle("Internal Server Error");
         problemDetail.setDetail("系統發生非預期錯誤");
+
+        return problemDetail;
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ProblemDetail handleValidationException(MethodArgumentNotValidException exception) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+
+        problemDetail.setTitle("Validation Failed");
+
+        String message = exception.getBindingResult().getFieldErrors().stream().findFirst()
+                .map(FieldError::getDefaultMessage).orElse("請求資料驗證失敗");
+
+        problemDetail.setDetail(message);
+        problemDetail.setProperty("code", "VALIDATION_ERROR");
 
         return problemDetail;
     }
