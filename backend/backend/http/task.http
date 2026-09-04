@@ -34,6 +34,14 @@ Content-Type: application/json
   "title": ""
 }
 
+### Invalid - title
+POST http://localhost:8080/api/tasks
+Content-Type: application/json
+
+{
+  "title": 
+}
+
 
 ### Invalid - title too long
 POST http://localhost:8080/api/tasks
@@ -42,3 +50,6 @@ Content-Type: application/json
 {
   "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 }
+
+#### Invalid - task id
+GET http://localhost:8080/api/tasks/abc

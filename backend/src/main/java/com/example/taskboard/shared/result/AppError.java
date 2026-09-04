@@ -2,6 +2,7 @@ package com.example.taskboard.shared.result;
 
 public record AppError(
         String code,
-        String message
+        String message,
+        ErrorType type
 ) {
 }

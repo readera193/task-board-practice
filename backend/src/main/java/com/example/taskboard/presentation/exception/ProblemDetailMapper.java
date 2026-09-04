@@ -11,15 +11,15 @@ public final class ProblemDetailMapper {
 
     public static ProblemDetail from(AppError error) {
 
-        HttpStatus status = switch (error.code()) {
-            case "TASK_NOT_FOUND" ->
-                    HttpStatus.NOT_FOUND;
+        HttpStatus status = switch (error.type()) {
+        case VALIDATION ->
+                HttpStatus.BAD_REQUEST;
 
-            case "TASK_INVALID_TITLE" ->
-                    HttpStatus.BAD_REQUEST;
+        case NOT_FOUND ->
+                HttpStatus.NOT_FOUND;
 
-            default ->
-                    HttpStatus.BAD_REQUEST;
+        case CONFLICT ->
+                HttpStatus.CONFLICT;
         };
 
         ProblemDetail problemDetail =
