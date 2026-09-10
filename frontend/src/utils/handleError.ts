@@ -1,4 +1,4 @@
-﻿import { isApiError } from '../services/httpClient'
+import { isApiError } from '../services/httpClient'
 
 const DEFAULT_MESSAGES: Record<number, string> = {
   400: '請求資料不正確',

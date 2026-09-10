@@ -1,4 +1,4 @@
-﻿package com.example.taskboard.shared.result;
+package com.example.taskboard.shared.result;
 
 public enum ErrorType {
     VALIDATION,
