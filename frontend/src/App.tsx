@@ -1,11 +1,14 @@
-import { FormEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import type { FormEvent } from 'react'
+
 import {
   createTask,
   deleteTask,
   getTasks,
-  Task,
   toggleTask,
 } from './api/taskApi'
+import type { Task } from './api/taskApi'
+
 import { handleError } from './utils/handleError'
 
 function App() {

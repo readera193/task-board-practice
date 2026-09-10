@@ -27,15 +27,21 @@ public class TaskService {
         return Result.success(TaskResult.from(savedTask));
     }
 
+    @Transactional(readOnly = true)
     public Result<List<TaskResult>> getAll() {
 
-        List<TaskResult> tasks = taskRepository.findAll().stream().map(TaskResult::from).toList();
+        List<TaskResult> tasks = taskRepository.findAll()
+                .stream()
+                .map(TaskResult::from)
+                .toList();
 
         return Result.success(tasks);
     }
 
+    @Transactional(readOnly = true)
     public Result<TaskResult> getById(Long id) {
-        return taskRepository.findById(id).map(task -> Result.success(TaskResult.from(task)))
+        return taskRepository.findById(id)
+                .map(task -> Result.success(TaskResult.from(task)))
                 .orElseGet(() -> Result.failure(TaskErrors.NOT_FOUND));
     }
 
@@ -54,6 +60,7 @@ public class TaskService {
         return Result.success(TaskResult.from(task));
     }
 
+    @Transactional
     public Result<Void> delete(Long id) {
         Optional<Task> optionalTask = taskRepository.findById(id);
 
