@@ -2,11 +2,20 @@ package com.example.taskboard.shared.exception;
 
 public class BusinessException extends RuntimeException {
 
-    public BusinessException(String message) {
+    private final String code;
+    private final ErrorType type;
+
+    public BusinessException(String code, String message, ErrorType type) {
         super(message);
+        this.code = code;
+        this.type = type;
     }
 
-    public BusinessException(String message, Throwable cause) {
-        super(message, cause);
+    public String getCode() {
+        return code;
+    }
+
+    public ErrorType getType() {
+        return type;
     }
 }

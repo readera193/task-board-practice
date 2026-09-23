@@ -1,0 +1,2 @@
+ALTER TABLE tasks
+ADD description NVARCHAR(1000) NULL;

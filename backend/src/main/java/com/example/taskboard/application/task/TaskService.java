@@ -1,75 +1,69 @@
 package com.example.taskboard.application.task;
 
+import com.example.taskboard.application.user.UserRepository;
 import com.example.taskboard.domain.task.Task;
-import com.example.taskboard.shared.result.Result;
+import com.example.taskboard.domain.user.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
-    public Result<TaskResult> create(String title) {
+    public TaskResult create(String title, String username) {
 
-        Task task = new Task(null, title.trim(), false, LocalDateTime.now());
+        User owner = userRepository.findByUsername(username)
+                .orElseThrow(TaskErrors::ownerNotFound);
+
+        Task task = new Task(null, title.trim(), false, LocalDateTime.now(), null, owner);
 
         Task savedTask = taskRepository.save(task);
 
-        return Result.success(TaskResult.from(savedTask));
+        return TaskResult.from(savedTask);
+    }
+
+    public Page<TaskResult> getAll(
+            String username,
+            Pageable pageable) {
+        return taskRepository
+                .findAllByUsername(username, pageable)
+                .map(TaskResult::from);
     }
 
     @Transactional(readOnly = true)
-    public Result<List<TaskResult>> getAll() {
+    public TaskResult getById(Long id, String username) {
+        Task task = taskRepository.findByIdAndUsername(id, username)
+                .orElseThrow(TaskErrors::notFound);
 
-        List<TaskResult> tasks = taskRepository.findAll()
-                .stream()
-                .map(TaskResult::from)
-                .toList();
-
-        return Result.success(tasks);
-    }
-
-    @Transactional(readOnly = true)
-    public Result<TaskResult> getById(Long id) {
-        return taskRepository.findById(id)
-                .map(task -> Result.success(TaskResult.from(task)))
-                .orElseGet(() -> Result.failure(TaskErrors.NOT_FOUND));
+        return TaskResult.from(task);
     }
 
     @Transactional
-    public Result<TaskResult> toggle(Long id) {
-        Optional<Task> optionalTask = taskRepository.findById(id);
-
-        if (optionalTask.isEmpty()) {
-            return Result.failure(TaskErrors.NOT_FOUND);
-        }
-
-        Task task = optionalTask.get();
+    public TaskResult toggle(Long id, String username) {
+        Task task = taskRepository.findByIdAndUsername(id, username)
+                .orElseThrow(TaskErrors::notFound);
 
         task.toggle();
 
-        return Result.success(TaskResult.from(task));
+        return TaskResult.from(task);
     }
 
     @Transactional
-    public Result<Void> delete(Long id) {
-        Optional<Task> optionalTask = taskRepository.findById(id);
+    public void delete(Long id, String username) {
+        Task task = taskRepository.findByIdAndUsername(id, username)
+                .orElseThrow(TaskErrors::notFound);
 
-        if (optionalTask.isEmpty()) {
-            return Result.failure(TaskErrors.NOT_FOUND);
-        }
-
-        taskRepository.delete(optionalTask.get());
-
-        return Result.success();
+        taskRepository.delete(task);
     }
 }

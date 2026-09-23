@@ -1,10 +1,30 @@
-﻿### Get all tasks
+﻿@token = eyJraWQiOiJTNDNLYURhNU4wdWtMckJwZXB1Nm5GMUZRNXhNRHUyaU1MMExNZGE5THhFIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNzkwMDY4MTY5LCJpYXQiOjE3OTAwNjQ1NjksInNjb3BlIjoiUk9MRV9VU0VSIEZBQ1RPUl9QQVNTV09SRCJ9.FKJ_FaPCPS1jqePskpM4WDxpE0qkSSIQC5Jr3y4Hne4
+POST http://localhost:8080/api/users/register
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "12345678"
+}
+
+### Login
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "12345678"
+}
+
+### Get all tasks
 GET http://localhost:8080/api/tasks
+Authorization: Bearer {{token}}
 
 
 ### Create task
 POST http://localhost:8080/api/tasks
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "title": "學習 Spring Boot"
@@ -13,22 +33,27 @@ Content-Type: application/json
 
 ### Get task by id
 GET http://localhost:8080/api/tasks/1
+Authorization: Bearer {{token}}
 
 
 ### Toggle task
 PATCH http://localhost:8080/api/tasks/1/toggle
+Authorization: Bearer {{token}}
 
 
 ### Delete task
 DELETE http://localhost:8080/api/tasks/1
+Authorization: Bearer {{token}}
 
 
 ### Get missing task
 GET http://localhost:8080/api/tasks/999
+Authorization: Bearer {{token}}
 
 ### Invalid - blank title
 POST http://localhost:8080/api/tasks
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "title": ""
@@ -37,6 +62,7 @@ Content-Type: application/json
 ### Invalid - title
 POST http://localhost:8080/api/tasks
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "title": 
@@ -46,6 +72,7 @@ Content-Type: application/json
 ### Invalid - title too long
 POST http://localhost:8080/api/tasks
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "title": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -53,3 +80,16 @@ Content-Type: application/json
 
 #### Invalid - task id
 GET http://localhost:8080/api/tasks/abc
+Authorization: Bearer {{token}}
+
+### Tasks
+GET http://localhost:8080/api/tasks
+Authorization: Bearer {{token}}
+
+### Current user
+GET http://localhost:8080/api/auth/me
+Authorization: Bearer {{token}}
+
+### USER 存取 ADMIN API
+GET http://localhost:8080/api/auth/admin-test
+Authorization: Bearer {{token}}

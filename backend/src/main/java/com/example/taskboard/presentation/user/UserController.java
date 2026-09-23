@@ -1,0 +1,31 @@
+package com.example.taskboard.presentation.user;
+
+import com.example.taskboard.application.user.UserService;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @PostMapping("/register")
+    public UserResponse register(
+            @Valid @RequestBody RegisterUserRequest request
+    ) {
+        return UserResponse.from(
+                userService.register(
+                        request.username(),
+                        request.password()
+                )
+        );
+    }
+}

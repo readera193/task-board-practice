@@ -1,3 +1,8 @@
+import {
+  clearAccessToken,
+  getAccessToken,
+} from './authStorage'
+
 export interface ProblemDetails {
   type?: string
   title?: string
@@ -66,12 +71,20 @@ async function httpRequest<T>(
   externalSignal?.addEventListener('abort', abortHandler)
 
   const hasBody = data !== undefined && data !== null
+  const accessToken = getAccessToken()
 
   try {
     const response = await fetch(`${API_BASE_URL}${url}`, {
       method,
       headers: {
-        ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
+        ...(hasBody
+          ? { 'Content-Type': 'application/json' }
+          : {}),
+        ...(accessToken
+          ? {
+            Authorization: `Bearer ${accessToken}`,
+          }
+          : {}),
         ...headers,
       },
       body: hasBody ? JSON.stringify(data) : undefined,
@@ -81,6 +94,9 @@ async function httpRequest<T>(
     const responseData = await parseResponse<T>(response)
 
     if (!response.ok) {
+      if (response.status === 401) {
+        clearAccessToken()
+      }
       throw {
         status: response.status,
         problemDetails:
