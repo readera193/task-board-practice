@@ -25,3 +25,7 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw clean verify
+
+      - name: Build Docker image
+        working-directory: backend
+        run: docker build -t task-board-backend .
