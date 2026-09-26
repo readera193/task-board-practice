@@ -1,5 +1,13 @@
 import httpClient from '../services/httpClient'
 
+export interface PagedResponse<T> {
+  items: T[]
+  page: number
+  size: number
+  totalElements: number
+  totalPages: number
+}
+
 export interface Task {
   id: number
   title: string
@@ -11,8 +19,8 @@ export interface CreateTaskRequest {
   title: string
 }
 
-export function getTasks(): Promise<Task[]> {
-  return httpClient.get<Task[]>('/api/tasks')
+export function getTasks(): Promise<PagedResponse<Task>> {
+  return httpClient.get<PagedResponse<Task>>('/api/tasks')
 }
 
 export function createTask(

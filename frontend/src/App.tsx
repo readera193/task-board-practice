@@ -87,7 +87,7 @@ function App() {
   async function loadTasks() {
     try {
       const result = await getTasks()
-      setTasks(result)
+      setTasks(result.items)
     } catch (error) {
       handleError(error)
     } finally {
