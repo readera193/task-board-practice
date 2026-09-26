@@ -18,6 +18,10 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: maven
+          cache-dependency-path: backend/pom.xml
 
       - name: Run tests
-        run: ./mvnw clean verify
+        working-directory: backend
+        run: |
+          chmod +x mvnw
+          ./mvnw clean verify
