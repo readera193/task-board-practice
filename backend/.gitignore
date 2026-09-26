@@ -36,3 +36,6 @@ build/
 application-local.properties
 
 .env
+
+# 本機專用 (Windows trustStore)
+.mvn/jvm.config
