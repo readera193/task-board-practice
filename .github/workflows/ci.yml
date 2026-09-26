@@ -1,5 +1,9 @@
 name: CI
 
+permissions:
+  contents: read
+  packages: write
+
 on:
   push:
   pull_request:
@@ -26,6 +30,18 @@ jobs:
           chmod +x mvnw
           ./mvnw clean verify
 
-      - name: Build Docker image
+      - name: Login to GHCR
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        if: github.event_name == 'push'
         working-directory: backend
-        run: docker build -t task-board-backend .
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/task-board-backend
+          docker build -t $IMAGE_NAME:latest .
+          docker push $IMAGE_NAME:latest
