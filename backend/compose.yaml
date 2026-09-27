@@ -1,21 +1,20 @@
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: task-board-sqlserver
+  mysql:
+    image: mysql:8.4
+    container_name: task-board-mysql
 
     environment:
-      ACCEPT_EULA: "Y"
-      MSSQL_PID: "Express"
-      MSSQL_SA_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_DATABASE: taskboard
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
 
     ports:
-      - "1434:1433"
+      - "3307:3306"
 
     volumes:
-      - sqlserver-data:/var/opt/mssql
+      - mysql-data:/var/lib/mysql
 
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\" || exit 1"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD}"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -23,10 +22,11 @@ services:
 
   backend:
     build: .
+    image: ghcr.io/readera193/task-board-backend:latest
     container_name: task-board-backend
 
     depends_on:
-      sqlserver:
+      mysql:
         condition: service_healthy
 
     ports:
@@ -35,11 +35,11 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: dev
 
-      DB_URL: "jdbc:sqlserver://sqlserver:1433;databaseName=taskboard;encrypt=true;trustServerCertificate=true"
-      DB_USERNAME: "sa"
+      DB_URL: "jdbc:mysql://mysql:3306/taskboard?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Taipei"
+      DB_USERNAME: "root"
       DB_PASSWORD: "${DB_PASSWORD}"
 
       JWT_SECRET: "${JWT_SECRET}"
 
 volumes:
-  sqlserver-data:
+  mysql-data:

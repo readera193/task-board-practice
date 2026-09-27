@@ -1,17 +1,17 @@
 CREATE TABLE tasks
 (
-    id BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    title NVARCHAR(255) NOT NULL,
-    completed BIT NOT NULL,
-    created_at DATETIME2 NOT NULL
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    completed BOOLEAN NOT NULL,
+    created_at DATETIME NOT NULL
 );
 
 CREATE TABLE users
 (
-    id BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    username NVARCHAR(50) NOT NULL,
-    password NVARCHAR(255) NOT NULL,
-    role NVARCHAR(20) NOT NULL,
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL,
 
     CONSTRAINT uq_users_username UNIQUE (username)
 );

@@ -1,2 +1,2 @@
 ALTER TABLE tasks
-ADD description NVARCHAR(1000) NULL;
+ADD description VARCHAR(1000) NULL;
