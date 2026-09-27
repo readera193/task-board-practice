@@ -40,7 +40,7 @@ class MySqlRepositoryIntegrationTest {
         private JpaTaskRepository taskRepository;
 
         @Test
-        void findAllByUserUsername_shouldWorkWithFlywayOnRealSqlServer() {
+        void findAllByUserUsername_shouldWorkWithFlywayOnRealMySql() {
                 User userA = new User(null, "userA", "password", "ROLE_USER");
 
                 User userB = new User(null, "userB", "password", "ROLE_USER");
