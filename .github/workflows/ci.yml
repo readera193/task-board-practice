@@ -62,3 +62,18 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Set deployment image
+        if: github.event_name == 'push'
+        run: |
+          echo "DEPLOY_IMAGE=ghcr.io/${{ github.repository_owner }}/task-board-backend:sha-${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Deploy to Northflank
+        if: github.event_name == 'push'
+        uses: northflank/deploy-to-northflank@v1
+        with:
+          northflank-api-key: ${{ secrets.NORTHFLANK_API_KEY }}
+          project-id: ${{ vars.NORTHFLANK_PROJECT_ID }}
+          service-id: ${{ vars.NORTHFLANK_SERVICE_ID }}
+          image-path: ${{ env.DEPLOY_IMAGE }}
+          credentials-id: ${{ vars.NORTHFLANK_CREDENTIALS_ID }}
