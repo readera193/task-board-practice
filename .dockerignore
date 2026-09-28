@@ -1,0 +1,8 @@
+.git
+**/node_modules
+**/dist
+**/target
+**/.env*
+**/*.local
+frontend/public.zip
+backend/.mvn/jvm.config

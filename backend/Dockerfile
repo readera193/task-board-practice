@@ -1,14 +1,25 @@
+FROM node:22-alpine AS frontend-build
+
+WORKDIR /frontend
+
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+
+COPY frontend/ ./
+RUN npm run build
+
 FROM eclipse-temurin:17-jdk AS build
 
 WORKDIR /app
 
-COPY .mvn .mvn
-COPY mvnw pom.xml ./
+COPY backend/.mvn .mvn
+COPY backend/mvnw backend/pom.xml ./
 
 RUN chmod +x mvnw
 RUN ./mvnw dependency:go-offline
 
-COPY src ./src
+COPY backend/src ./src
+COPY --from=frontend-build /frontend/dist ./src/main/resources/static
 
 RUN ./mvnw clean package -DskipTests
 

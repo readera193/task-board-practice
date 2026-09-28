@@ -27,7 +27,8 @@ interface RequestOptions {
 }
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
+  import.meta.env.VITE_API_BASE_URL ??
+  (import.meta.env.PROD ? '' : 'http://localhost:8080')
 
 async function parseResponse<T>(response: Response): Promise<T> {
   if (response.status === 204) {
