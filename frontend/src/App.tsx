@@ -240,7 +240,7 @@ function App() {
   }
 
   if (loading) {
-    return <div className="loading-screen">Loading...</div>
+    return <div className="loading-screen">載入中...</div>
   }
 
   if (!currentUser) {
@@ -248,12 +248,12 @@ function App() {
       return (
         <main className="page center">
           <div className="auth-card">
-            <h1 className="auth-title">Create account</h1>
-            <p className="auth-subtitle">Sign up to start managing your tasks</p>
+            <h1 className="auth-title">建立帳號</h1>
+            <p className="auth-subtitle">註冊帳號以開始管理你的任務</p>
 
             <form onSubmit={handleRegister}>
               <div className="field">
-                <label htmlFor="register-username">Username</label>
+                <label htmlFor="register-username">帳號</label>
                 <input
                   id="register-username"
                   value={registerUsername}
@@ -264,7 +264,7 @@ function App() {
               </div>
 
               <div className="field">
-                <label htmlFor="register-password">Password</label>
+                <label htmlFor="register-password">密碼</label>
                 <input
                   id="register-password"
                   type="password"
@@ -276,7 +276,7 @@ function App() {
               </div>
 
               <button type="submit" className="btn btn-primary">
-                Register
+                註冊
               </button>
             </form>
 
@@ -285,7 +285,7 @@ function App() {
               className="btn btn-link"
               onClick={() => setAuthMode('login')}
             >
-              Already have an account? Sign in
+              已經有帳號了？前往登入
             </button>
           </div>
         </main>
@@ -295,12 +295,12 @@ function App() {
     return (
       <main className="page center">
         <div className="auth-card">
-          <h1 className="auth-title">Welcome back</h1>
-          <p className="auth-subtitle">Sign in to manage your tasks</p>
+          <h1 className="auth-title">歡迎回來</h1>
+          <p className="auth-subtitle">登入以管理你的任務</p>
 
           <form onSubmit={handleLogin}>
             <div className="field">
-              <label htmlFor="username">Username</label>
+              <label htmlFor="username">帳號</label>
               <input
                 id="username"
                 value={username}
@@ -311,7 +311,7 @@ function App() {
             </div>
 
             <div className="field">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">密碼</label>
               <input
                 id="password"
                 type="password"
@@ -323,7 +323,7 @@ function App() {
             </div>
 
             <button type="submit" className="btn btn-primary">
-              Login
+              登入
             </button>
           </form>
 
@@ -332,7 +332,7 @@ function App() {
             className="btn btn-link"
             onClick={() => setAuthMode('register')}
           >
-            Need an account? Register
+            還沒有帳號？前往註冊
           </button>
         </div>
       </main>
@@ -344,7 +344,7 @@ function App() {
       <div className="board-card">
         <div className="board-header">
           <span className="user-chip">
-            Signed in as <strong>{currentUser}</strong>
+            目前登入身分：<strong>{currentUser}</strong>
           </span>
 
           <button
@@ -352,11 +352,11 @@ function App() {
             className="btn btn-ghost"
             onClick={handleLogout}
           >
-            Logout
+            登出
           </button>
         </div>
 
-        <h1 className="board-title">Task Board</h1>
+        <h1 className="board-title">任務看板</h1>
 
         <form className="task-form" onSubmit={handleCreate}>
           <input
@@ -364,7 +364,7 @@ function App() {
             onChange={(event) =>
               setTitle(event.target.value)
             }
-            placeholder="New task"
+            placeholder="新增任務"
           />
 
           <textarea
@@ -373,16 +373,16 @@ function App() {
             onChange={(event) =>
               setDescription(event.target.value)
             }
-            placeholder="Description (optional)"
+            placeholder="描述（選填）"
           />
 
           <button type="submit" className="btn btn-primary">
-            Add
+            新增
           </button>
         </form>
 
         {tasks.length === 0 ? (
-          <p className="empty-state">No tasks yet. Add one above to get started.</p>
+          <p className="empty-state">目前尚無任務，請在上方新增一筆。</p>
         ) : (
           <ul className="task-list">
             {tasks.map((task) => (
@@ -397,7 +397,7 @@ function App() {
                       onChange={(event) =>
                         setEditTitle(event.target.value)
                       }
-                      placeholder="Title"
+                      placeholder="標題"
                     />
 
                     <textarea
@@ -406,12 +406,12 @@ function App() {
                       onChange={(event) =>
                         setEditDescription(event.target.value)
                       }
-                      placeholder="Description (optional)"
+                      placeholder="描述（選填）"
                     />
 
                     <div className="task-edit-actions">
                       <button type="submit" className="btn btn-primary">
-                        Save
+                        儲存
                       </button>
 
                       <button
@@ -419,7 +419,7 @@ function App() {
                         className="btn btn-ghost"
                         onClick={cancelEdit}
                       >
-                        Cancel
+                        取消
                       </button>
                     </div>
                   </form>
@@ -456,7 +456,7 @@ function App() {
                       className="btn btn-ghost"
                       onClick={() => startEdit(task)}
                     >
-                      Edit
+                      編輯
                     </button>
 
                     <button
@@ -466,7 +466,7 @@ function App() {
                         handleDelete(task.id)
                       }
                     >
-                      Delete
+                      刪除
                     </button>
                   </>
                 )}
