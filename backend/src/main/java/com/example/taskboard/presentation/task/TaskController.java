@@ -56,12 +56,22 @@ public class TaskController {
 
     @PostMapping
     public TaskResponse create(@Valid @RequestBody CreateTaskRequest request, Authentication authentication) {
-        return TaskResponse.from(taskService.create(request.title(), authentication.getName()));
+        return TaskResponse.from(
+                taskService.create(request.title(), request.description(), authentication.getName()));
     }
 
     @GetMapping("/{id}")
     public TaskResponse getById(@PathVariable Long id, Authentication authentication) {
         return TaskResponse.from(taskService.getById(id, authentication.getName()));
+    }
+
+    @PutMapping("/{id}")
+    public TaskResponse update(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateTaskRequest request,
+            Authentication authentication) {
+        return TaskResponse.from(
+                taskService.update(id, request.title(), request.description(), authentication.getName()));
     }
 
     @PatchMapping("/{id}/toggle")

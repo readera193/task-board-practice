@@ -15,11 +15,30 @@ export interface CurrentUser {
   username: string
 }
 
+export interface RegisterRequest {
+  username: string
+  password: string
+}
+
+export interface RegisterResponse {
+  id: number
+  username: string
+}
+
 export function login(
   request: LoginRequest,
 ): Promise<LoginResponse> {
   return httpClient.post<LoginResponse>(
     '/api/auth/login',
+    request,
+  )
+}
+
+export function register(
+  request: RegisterRequest,
+): Promise<RegisterResponse> {
+  return httpClient.post<RegisterResponse>(
+    '/api/users/register',
     request,
   )
 }

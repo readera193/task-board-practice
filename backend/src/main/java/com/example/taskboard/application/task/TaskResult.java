@@ -8,7 +8,8 @@ public record TaskResult(
         Long id,
         String title,
         boolean completed,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        String description
 ) {
 
     public static TaskResult from(Task task) {
@@ -16,7 +17,8 @@ public record TaskResult(
                 task.getId(),
                 task.getTitle(),
                 task.isCompleted(),
-                task.getCreatedAt()
+                task.getCreatedAt(),
+                task.getDescription()
         );
     }
 }

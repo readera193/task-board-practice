@@ -58,11 +58,20 @@ public class Task {
         return createdAt;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public User getUser() {
         return user;
     }
 
     public void toggle() {
         completed = !completed;
+    }
+
+    public void update(String title, String description) {
+        this.title = title;
+        this.description = description;
     }
 }

@@ -13,10 +13,17 @@ export interface Task {
   title: string
   completed: boolean
   createdAt: string
+  description: string | null
 }
 
 export interface CreateTaskRequest {
   title: string
+  description?: string
+}
+
+export interface UpdateTaskRequest {
+  title: string
+  description?: string
 }
 
 export function getTasks(): Promise<PagedResponse<Task>> {
@@ -28,6 +35,16 @@ export function createTask(
 ): Promise<Task> {
   return httpClient.post<Task>(
     '/api/tasks',
+    request,
+  )
+}
+
+export function updateTask(
+  id: number,
+  request: UpdateTaskRequest,
+): Promise<Task> {
+  return httpClient.put<Task>(
+    `/api/tasks/${id}`,
     request,
   )
 }

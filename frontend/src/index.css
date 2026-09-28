@@ -1,6 +1,30 @@
+:root {
+  color-scheme: light;
+
+  --color-bg-from: #eef2ff;
+  --color-bg-to: #f8fafc;
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-primary-soft: #eef2ff;
+  --color-text: #1e293b;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-danger: #ef4444;
+  --color-danger-soft: #fef2f2;
+  --color-surface: #ffffff;
+  --shadow-card: 0 10px 30px -12px rgba(30, 41, 59, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: var(--color-text);
+  background: linear-gradient(160deg, var(--color-bg-from), var(--color-bg-to));
 }
 
 main {

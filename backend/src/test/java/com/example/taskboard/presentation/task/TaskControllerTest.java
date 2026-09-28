@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -56,7 +57,8 @@ class TaskControllerTest {
                                 1L,
                                 "Test Task",
                                 false,
-                                createdAt);
+                                createdAt,
+                                null);
 
                 when(taskService.getById(
                                 1L,
@@ -106,7 +108,8 @@ class TaskControllerTest {
                                 1L,
                                 "Test Task",
                                 false,
-                                createdAt);
+                                createdAt,
+                                null);
 
                 Pageable expectedPageable = PageRequest.of(
                                 0,
@@ -264,10 +267,12 @@ class TaskControllerTest {
                                 1L,
                                 "Test Task",
                                 false,
-                                createdAt);
+                                createdAt,
+                                null);
 
                 when(taskService.create(
                                 "Test Task",
+                                null,
                                 "testuser")).thenReturn(result);
 
                 mockMvc.perform(
@@ -286,7 +291,87 @@ class TaskControllerTest {
 
                 verify(taskService).create(
                                 "Test Task",
+                                null,
                                 "testuser");
+        }
+
+        @Test
+        void update_whenRequestIsValid_shouldReturnUpdatedTask() throws Exception {
+                LocalDateTime createdAt = LocalDateTime.of(2026, 9, 23, 15, 0);
+
+                TaskResult result = new TaskResult(
+                                1L,
+                                "New Title",
+                                false,
+                                createdAt,
+                                "New Description");
+
+                when(taskService.update(
+                                1L,
+                                "New Title",
+                                "New Description",
+                                "testuser")).thenReturn(result);
+
+                mockMvc.perform(
+                                put("/api/tasks/1")
+                                                .principal(authentication())
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content("""
+                                                                {
+                                                                  "title": "New Title",
+                                                                  "description": "New Description"
+                                                                }
+                                                                """))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(1))
+                                .andExpect(jsonPath("$.title").value("New Title"))
+                                .andExpect(jsonPath("$.description").value("New Description"));
+
+                verify(taskService).update(
+                                1L,
+                                "New Title",
+                                "New Description",
+                                "testuser");
+        }
+
+        @Test
+        void update_whenTitleIsBlank_shouldReturnBadRequest() throws Exception {
+                mockMvc.perform(
+                                put("/api/tasks/1")
+                                                .principal(authentication())
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content("""
+                                                                {
+                                                                  "title": "   "
+                                                                }
+                                                                """))
+                                .andExpect(status().isBadRequest())
+                                .andExpect(jsonPath("$.code")
+                                                .value("VALIDATION_ERROR"));
+
+                verifyNoInteractions(taskService);
+        }
+
+        @Test
+        void update_whenTaskNotFound_shouldReturnNotFound() throws Exception {
+                when(taskService.update(
+                                999L,
+                                "New Title",
+                                null,
+                                "testuser")).thenThrow(TaskErrors.notFound());
+
+                mockMvc.perform(
+                                put("/api/tasks/999")
+                                                .principal(authentication())
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content("""
+                                                                {
+                                                                  "title": "New Title"
+                                                                }
+                                                                """))
+                                .andExpect(status().isNotFound())
+                                .andExpect(jsonPath("$.code")
+                                                .value("TASK_NOT_FOUND"));
         }
 
         @Test
@@ -297,7 +382,8 @@ class TaskControllerTest {
                                 1L,
                                 "Test Task",
                                 true,
-                                createdAt);
+                                createdAt,
+                                null);
 
                 when(taskService.toggle(
                                 1L,

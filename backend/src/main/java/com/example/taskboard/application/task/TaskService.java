@@ -21,12 +21,13 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskResult create(String title, String username) {
+    public TaskResult create(String title, String description, String username) {
 
         User owner = userRepository.findByUsername(username)
                 .orElseThrow(TaskErrors::ownerNotFound);
 
-        Task task = new Task(null, title.trim(), false, LocalDateTime.now(), null, owner);
+        Task task = new Task(null, title.trim(), false, LocalDateTime.now(),
+                normalizeDescription(description), owner);
 
         Task savedTask = taskRepository.save(task);
 
@@ -57,6 +58,23 @@ public class TaskService {
         task.toggle();
 
         return TaskResult.from(task);
+    }
+
+    @Transactional
+    public TaskResult update(Long id, String title, String description, String username) {
+        Task task = taskRepository.findByIdAndUsername(id, username)
+                .orElseThrow(TaskErrors::notFound);
+
+        task.update(title.trim(), normalizeDescription(description));
+
+        return TaskResult.from(task);
+    }
+
+    private String normalizeDescription(String description) {
+        if (description == null || description.isBlank()) {
+            return null;
+        }
+        return description.trim();
     }
 
     @Transactional

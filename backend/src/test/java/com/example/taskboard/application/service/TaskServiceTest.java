@@ -118,6 +118,7 @@ class TaskServiceTest {
 
                 TaskResult result = taskService.create(
                                 "  Test Task  ",
+                                "  Test Description  ",
                                 "testuser");
 
                 ArgumentCaptor<Task> taskCaptor = ArgumentCaptor.forClass(Task.class);
@@ -127,6 +128,7 @@ class TaskServiceTest {
                 Task savedTask = taskCaptor.getValue();
 
                 assertEquals("Test Task", savedTask.getTitle());
+                assertEquals("Test Description", savedTask.getDescription());
                 assertFalse(savedTask.isCompleted());
                 assertEquals(user, savedTask.getUser());
 
@@ -143,6 +145,7 @@ class TaskServiceTest {
                                 NotFoundException.class,
                                 () -> taskService.create(
                                                 "Test Task",
+                                                null,
                                                 "testuser"));
 
                 assertEquals(
@@ -205,6 +208,61 @@ class TaskServiceTest {
                 verify(taskRepository).findByIdAndUsername(
                                 999L,
                                 "testuser");
+        }
+
+        @Test
+        void update_whenTaskExists_shouldUpdateTitleAndDescription() {
+                User user = new User(
+                                1L,
+                                "testuser",
+                                "password",
+                                "ROLE_USER");
+
+                Task task = new Task(
+                                1L,
+                                "Old Title",
+                                false,
+                                LocalDateTime.now(),
+                                "Old Description",
+                                user);
+
+                when(taskRepository.findByIdAndUsername(
+                                1L,
+                                "testuser")).thenReturn(Optional.of(task));
+
+                TaskResult result = taskService.update(
+                                1L,
+                                "  New Title  ",
+                                "  New Description  ",
+                                "testuser");
+
+                assertEquals("New Title", task.getTitle());
+                assertEquals("New Description", task.getDescription());
+                assertEquals("New Title", result.title());
+                assertEquals("New Description", result.description());
+
+                verify(taskRepository).findByIdAndUsername(
+                                1L,
+                                "testuser");
+        }
+
+        @Test
+        void update_whenTaskNotFound_shouldThrowNotFoundException() {
+                when(taskRepository.findByIdAndUsername(
+                                999L,
+                                "testuser")).thenReturn(Optional.empty());
+
+                NotFoundException exception = assertThrows(
+                                NotFoundException.class,
+                                () -> taskService.update(
+                                                999L,
+                                                "New Title",
+                                                "New Description",
+                                                "testuser"));
+
+                assertEquals(
+                                "TASK_NOT_FOUND",
+                                exception.getCode());
         }
 
         @Test
