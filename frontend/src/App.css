@@ -290,3 +290,10 @@
   color: var(--color-text-muted);
   font-size: 14px;
 }
+
+.field-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}

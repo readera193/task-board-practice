@@ -3,6 +3,11 @@ import {
   getAccessToken,
 } from './authStorage'
 
+export interface FieldViolation {
+  field: string
+  message: string
+}
+
 export interface ProblemDetails {
   type?: string
   title?: string
@@ -10,6 +15,7 @@ export interface ProblemDetails {
   detail?: string
   instance?: string
   code?: string
+  errors?: FieldViolation[]
 }
 
 export interface ApiError {

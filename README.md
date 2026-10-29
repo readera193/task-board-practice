@@ -135,6 +135,8 @@ task-board-practice/
 └── frontend/                # React + TypeScript 前端
     └── src/
         ├── api/              # API 呼叫
+        ├── components/       # AuthPage、TaskBoard、TaskForm、TaskItem
+        ├── hooks/            # useAuth、useTasks（狀態與副作用）
         ├── services/         # Token 儲存等前端服務
         └── utils/            # 錯誤處理等工具
 ```
@@ -177,3 +179,12 @@ cd backend
 ```
 
 （若本機有 Docker，`MySqlRepositoryIntegrationTest` 會自動用 Testcontainers 啟動 MySQL；沒有 Docker 則自動跳過該測試。）
+
+---
+
+## 已知限制與取捨
+
+- **分頁型別沿用 Spring Data**：`TaskRepository`（application 層的 port）直接使用 `Page` / `Pageable`，沒有另建一套分頁型別。這是刻意的取捨：Repository 的實作本來就是 Spring Data JPA，多包一層只是重複轉換；真要換掉持久化技術時再抽離即可。
+- **Token 存在 `localStorage`**：容易受 XSS 影響，但改用 HttpOnly Cookie 會引入 CSRF 防護，對這個規模屬過度設計。
+- **登入無暴力破解防護**：尚未實作登入失敗次數限制。
+- **程式碼格式**：後端以 spotless（google-java-format AOSP 風格）檢查，`./mvnw spotless:apply` 可自動格式化，`verify` 階段會擋未格式化的程式碼。
