@@ -55,7 +55,7 @@ shared/          → 跨層共用的例外型別
 - 使用 Spring Security `OAuth2 Resource Server` 搭配自簽 HMAC（`NimbusJwtEncoder` / `NimbusJwtDecoder`）簽發與驗證 JWT，而非引入額外第三方套件手刻。
 - `DaoAuthenticationProvider` + `UserDetailsService` 處理帳密登入、`BCrypt` 密碼雜湊。
 - Stateless session（`SessionCreationPolicy.STATELESS`），搭配自訂 `AuthenticationEntryPoint` / `AccessDeniedHandler` 統一回傳 JSON 格式的 401 / 403。
-- 練習了以 `scope` claim 做簡單的角色權限控管（`SCOPE_ROLE_ADMIN`）。
+- Token 以 `scope` claim 攜帶角色（`ROLE_USER`），作為日後擴充角色權限控管的基礎。
 
 ### 3. 資料庫遷移（Flyway）
 `db/migration` 下以 `V1` ~ `V4` 記錄了表結構隨需求演進的過程（建表 → 加欄位 → 加關聯 → 補 NOT NULL 約束），練習用遷移腳本而非手動改 schema 的方式管理資料庫版本。
@@ -84,8 +84,8 @@ shared/          → 跨層共用的例外型別
 ### 7. CI/CD（GitHub Actions → Northflank）
 完整流程定義在 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)：
 
-1. **Test**：每次 push / PR 都會跑 `./mvnw clean verify`（含上述四層測試）。
-2. **Build & Push**：測試通過且是 push 事件時，才用 Docker Buildx 建置 image，並以 `latest` 與 `sha-<commit>` 兩種 tag push 到 GitHub Container Registry（GHCR），同時啟用 `cache-from`/`cache-to` 加速 build。
+1. **Test**：任何分支 push / PR 都會跑 `./mvnw clean verify`（含上述四層測試）。
+2. **Build & Push**：測試通過且是 `main` 分支的 push 事件時，才用 Docker Buildx 建置 image，並以 `latest` 與 `sha-<commit>` 兩種 tag push 到 GitHub Container Registry（GHCR），同時啟用 `cache-from`/`cache-to` 加速 build。
 3. **Deploy**：以剛 build 出的 `sha-<commit>` image 呼叫 `northflank/deploy-to-northflank` action，自動部署到 Northflank 上的正式環境。
 
 練習點：測試沒過就不會 build/deploy（quality gate）、用 commit SHA 而非 `latest` 做部署以確保每次部署版本可追溯、機敏資訊（Northflank API Key 等）以 GitHub Secrets / Variables 管理不落地在程式碼中。

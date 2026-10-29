@@ -51,10 +51,6 @@ function App() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    initialize()
-  }, [])
-
-  useEffect(() => {
     function handleAuthChanged() {
       if (!getAccessToken()) {
         setCurrentUser(null)
@@ -109,6 +105,14 @@ function App() {
       setLoading(false)
     }
   }
+
+  // 只在掛載時初始化一次；initialize 為元件內函式，刻意不列入相依。
+  // 之後拆出 useAuth / useTasks hook 時再改成符合 set-state-in-effect 規則的寫法
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    initialize()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function handleLogin(
     event: FormEvent<HTMLFormElement>,
