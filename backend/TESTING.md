@@ -8,7 +8,7 @@
 | JPA slice | `JpaTaskRepositoryTest` | Entity mapping、owner scope、pagination / sorting query | `@DataJpaTest` + H2 |
 | Web slice | `TaskControllerTest` | HTTP status、JSON、validation、Authentication username、Pageable binding | `@WebMvcTest`；Security filters 關閉；`TaskService` mock |
 | Full integration | `TaskApiIntegrationTest` | Register → Login → 真 JWT → Create Task → Query Task，以及未登入 401 | `@SpringBootTest` + H2 |
-| Production DB integration | `SqlServerRepositoryIntegrationTest` | Flyway + Hibernate validate + Repository query 在真 SQL Server 上可執行 | Testcontainers + SQL Server |
+| Production DB integration | `MySqlRepositoryIntegrationTest` | Flyway + Hibernate validate + Repository query 在真 MySQL 上可執行 | Testcontainers + MySQL |
 
 ## 保留原則
 
@@ -17,7 +17,7 @@
 - Controller 詳細測 HTTP、validation、binding 與 username 傳遞；不重新測 Service business logic，也不在 slice test 重測 Security filter chain。
 - 真正的 JWT 驗證與 401 security boundary 放在 Full Integration Test。
 - Full integration 只留少量高價值 happy path，確認整條 wiring 能運作。
-- SQL Server Testcontainers 只留少量 production-database-specific 測試，確認 Flyway 與 SQL dialect；不複製整套 H2 測試。
+- MySQL Testcontainers 只留少量 production-database-specific 測試，確認 Flyway 與 SQL dialect；不複製整套 H2 測試。
 
 ## 執行
 
@@ -27,7 +27,7 @@
 .\mvnw.cmd test
 ```
 
-若 Docker 可用，`SqlServerRepositoryIntegrationTest` 會啟動 SQL Server container；若 Docker 不可用，該測試會自動跳過。
+若 Docker 可用，`MySqlRepositoryIntegrationTest` 會啟動 MySQL container；若 Docker 不可用，該測試會自動跳過。
 
 只跑 Service Unit Test：
 
@@ -41,8 +41,8 @@
 .\mvnw.cmd -Dtest=TaskControllerTest test
 ```
 
-只跑 SQL Server Testcontainers：
+只跑 MySQL Testcontainers：
 
 ```powershell
-.\mvnw.cmd -Dtest=SqlServerRepositoryIntegrationTest test
+.\mvnw.cmd -Dtest=MySqlRepositoryIntegrationTest test
 ```

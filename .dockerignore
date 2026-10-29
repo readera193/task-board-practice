@@ -4,5 +4,4 @@
 **/target
 **/.env*
 **/*.local
-frontend/public.zip
 backend/.mvn/jvm.config

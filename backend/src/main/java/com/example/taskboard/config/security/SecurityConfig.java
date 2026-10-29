@@ -65,11 +65,9 @@ public class SecurityConfig {
                                 "/favicon.svg",
                                 "/icons.svg",
                                 "/api/users/register",
-                                "/api/auth/login"
+                                "/api/auth/login",
+                                "/actuator/health"
                         ).permitAll()
-
-                        .requestMatchers("/api/auth/admin-test")
-                        .hasAuthority("SCOPE_ROLE_ADMIN")
 
                         .anyRequest().authenticated()
                 )

@@ -56,9 +56,4 @@ public class AuthController {
                 authentication.getName()
         );
     }
-
-    @GetMapping("/admin-test")
-    public String adminTest() {
-        return "admin only";
-    }
 }
