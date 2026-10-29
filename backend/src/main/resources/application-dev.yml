@@ -1,0 +1,14 @@
+# 本機開發：連線預設值僅供開發使用
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/taskboard?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Taipei}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  jpa:
+    show-sql: true

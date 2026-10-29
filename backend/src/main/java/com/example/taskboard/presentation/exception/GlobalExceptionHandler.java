@@ -2,8 +2,6 @@ package com.example.taskboard.presentation.exception;
 
 import com.example.taskboard.shared.exception.BusinessException;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
@@ -15,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -30,11 +27,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ProblemDetail handleBusinessException(BusinessException exception) {
-        HttpStatus status = switch (exception.getType()) {
-            case VALIDATION -> HttpStatus.BAD_REQUEST;
-            case NOT_FOUND -> HttpStatus.NOT_FOUND;
-            case CONFLICT -> HttpStatus.CONFLICT;
-        };
+        HttpStatus status =
+                switch (exception.getType()) {
+                    case VALIDATION -> HttpStatus.BAD_REQUEST;
+                    case NOT_FOUND -> HttpStatus.NOT_FOUND;
+                    case CONFLICT -> HttpStatus.CONFLICT;
+                };
 
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
 
@@ -69,11 +67,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetail.setDetail("請求資料驗證失敗");
         problemDetail.setProperty("code", "VALIDATION_ERROR");
 
-        Map<String, List<String>> errors = exception.getBindingResult().getFieldErrors().stream()
-                .collect(Collectors.groupingBy(FieldError::getField,
-                        Collectors.mapping(fieldError -> fieldError.getDefaultMessage() != null
-                                ? fieldError.getDefaultMessage()
-                                : "欄位驗證失敗", Collectors.toList())));
+        // 與 195Home 一致：errors 為 [{field, message}] 陣列，前端可直接逐筆顯示
+        List<FieldViolation> errors =
+                exception.getBindingResult().getFieldErrors().stream()
+                        .map(
+                                fieldError ->
+                                        new FieldViolation(
+                                                fieldError.getField(),
+                                                fieldError.getDefaultMessage() != null
+                                                        ? fieldError.getDefaultMessage()
+                                                        : "欄位驗證失敗"))
+                        .toList();
 
         problemDetail.setProperty("errors", errors);
 
@@ -104,9 +108,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
 
         problemDetail.setTitle("Invalid Parameter");
-        String name = exception instanceof MethodArgumentTypeMismatchException mismatch
-                ? mismatch.getName()
-                : exception.getPropertyName();
+        String name =
+                exception instanceof MethodArgumentTypeMismatchException mismatch
+                        ? mismatch.getName()
+                        : exception.getPropertyName();
         problemDetail.setDetail("參數 " + name + " 格式不正確");
         problemDetail.setProperty("code", "INVALID_PARAMETER");
 
@@ -114,15 +119,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ProblemDetail handleAuthenticationException(
-            AuthenticationException exception) {
+    public ProblemDetail handleAuthenticationException(AuthenticationException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
 
         problemDetail.setTitle("Unauthorized");
         problemDetail.setDetail("帳號或密碼錯誤");
-        problemDetail.setProperty(
-                "code",
-                "INVALID_CREDENTIALS");
+        problemDetail.setProperty("code", "INVALID_CREDENTIALS");
 
         return problemDetail;
     }

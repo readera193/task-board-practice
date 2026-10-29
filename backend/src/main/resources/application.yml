@@ -1,0 +1,33 @@
+# 共用設定。環境差異放在 application-{dev,prod,test}.yml；未指定 profile 時預設為 dev，
+# 正式環境由 SPRING_PROFILES_ACTIVE=prod 指定（Dockerfile 已預設）。
+spring:
+  config:
+    # 選用的本機覆蓋檔（不進版控）；.properties 與 .yml 皆可
+    import: optional:file:./application-local.yml,optional:file:./application-local.properties
+  application:
+    name: taskboard
+  profiles:
+    default: dev
+  data:
+    web:
+      pageable:
+        max-page-size: 100
+  flyway:
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    # 避免 view 渲染期間還開著 DB 連線；所有查詢都在 Service 交易內完成
+    open-in-view: false
+
+server:
+  servlet:
+    session:
+      persistent: false
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-minutes: 60
+  cors:
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173}

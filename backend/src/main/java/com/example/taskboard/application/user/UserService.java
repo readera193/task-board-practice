@@ -1,5 +1,6 @@
 package com.example.taskboard.application.user;
 
+import com.example.taskboard.domain.user.Role;
 import com.example.taskboard.domain.user.User;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,34 +13,22 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder
-    ) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
-    public UserResult register(
-            String username,
-            String password
-    ) {
+    public UserResult register(String username, String password) {
         String normalizedUsername = username.trim();
 
         if (userRepository.existsByUsername(normalizedUsername)) {
             throw UserErrors.usernameAlreadyExists();
         }
 
-        String encodedPassword =
-                passwordEncoder.encode(password);
+        String encodedPassword = passwordEncoder.encode(password);
 
-        User user = new User(
-                null,
-                normalizedUsername,
-                encodedPassword,
-                "USER"
-        );
+        User user = new User(null, normalizedUsername, encodedPassword, Role.USER);
 
         try {
             return UserResult.from(userRepository.save(user));

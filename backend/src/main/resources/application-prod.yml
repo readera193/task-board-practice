@@ -1,0 +1,12 @@
+# 正式環境：連線資訊與機密一律由環境變數提供，缺少時啟動即失敗（fail-fast）
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:10}
+      minimum-idle: ${DB_POOL_MIN_IDLE:2}
+      connection-timeout: ${DB_POOL_CONNECTION_TIMEOUT:30000}
+  jpa:
+    show-sql: false
