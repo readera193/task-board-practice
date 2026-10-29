@@ -26,67 +26,49 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    private final RestAuthenticationEntryPoint
-            restAuthenticationEntryPoint;
+    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
-    private final RestAccessDeniedHandler
-            restAccessDeniedHandler;
+    private final RestAccessDeniedHandler restAccessDeniedHandler;
 
     public SecurityConfig(
-            RestAuthenticationEntryPoint
-                    restAuthenticationEntryPoint,
-            RestAccessDeniedHandler
-                    restAccessDeniedHandler
-    ) {
-        this.restAuthenticationEntryPoint =
-                restAuthenticationEntryPoint;
+            RestAuthenticationEntryPoint restAuthenticationEntryPoint,
+            RestAccessDeniedHandler restAccessDeniedHandler) {
+        this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
 
-        this.restAccessDeniedHandler =
-                restAccessDeniedHandler;
+        this.restAccessDeniedHandler = restAccessDeniedHandler;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
-            throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http
-                .cors(Customizer.withDefaults())
+        http.cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
-                        )
-                )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/",
-                                "/index.html",
-                                "/assets/**",
-                                "/favicon.svg",
-                                "/icons.svg",
-                                "/api/users/register",
-                                "/api/auth/login",
-                                "/actuator/health"
-                        ).permitAll()
-
-                        .anyRequest().authenticated()
-                )
-                .headers(headers -> headers
-                        .frameOptions(frame -> frame.sameOrigin())
-                )
-                .exceptionHandling(exception ->
-                        exception
-                                .authenticationEntryPoint(
-                                        restAuthenticationEntryPoint
-                                )
-                                .accessDeniedHandler(
-                                        restAccessDeniedHandler
-                                )
-                )
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(Customizer.withDefaults())
-                        .authenticationEntryPoint(restAuthenticationEntryPoint)
-                );
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(
+                        auth ->
+                                auth.requestMatchers(
+                                                "/",
+                                                "/index.html",
+                                                "/assets/**",
+                                                "/favicon.svg",
+                                                "/icons.svg",
+                                                "/api/users/register",
+                                                "/api/auth/login",
+                                                "/actuator/health")
+                                        .permitAll()
+                                        .anyRequest()
+                                        .authenticated())
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+                .exceptionHandling(
+                        exception ->
+                                exception
+                                        .authenticationEntryPoint(restAuthenticationEntryPoint)
+                                        .accessDeniedHandler(restAccessDeniedHandler))
+                .oauth2ResourceServer(
+                        oauth2 ->
+                                oauth2.jwt(Customizer.withDefaults())
+                                        .authenticationEntryPoint(restAuthenticationEntryPoint));
 
         return http.build();
     }
@@ -98,11 +80,8 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(
-            UserDetailsService userDetailsService,
-            PasswordEncoder passwordEncoder
-    ) {
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(userDetailsService);
+            UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
 
         provider.setPasswordEncoder(passwordEncoder);
 
@@ -110,30 +89,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecretKey jwtSecretKey(
-        JwtProperties jwtProperties
-    ) {
+    public SecretKey jwtSecretKey(JwtProperties jwtProperties) {
         return new SecretKeySpec(
-                jwtProperties.secret().getBytes(StandardCharsets.UTF_8),
-                "HmacSHA256"
-        );
+                jwtProperties.secret().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
     }
 
     @Bean
-    public JwtEncoder jwtEncoder(
-            SecretKey jwtSecretKey
-    ) {
-        return NimbusJwtEncoder
-                .withSecretKey(jwtSecretKey)
-                .build();
+    public JwtEncoder jwtEncoder(SecretKey jwtSecretKey) {
+        return NimbusJwtEncoder.withSecretKey(jwtSecretKey).build();
     }
 
     @Bean
-    public JwtDecoder jwtDecoder(
-            SecretKey jwtSecretKey
-    ) {
-        return NimbusJwtDecoder
-                .withSecretKey(jwtSecretKey)
-                .build();
+    public JwtDecoder jwtDecoder(SecretKey jwtSecretKey) {
+        return NimbusJwtDecoder.withSecretKey(jwtSecretKey).build();
     }
 }

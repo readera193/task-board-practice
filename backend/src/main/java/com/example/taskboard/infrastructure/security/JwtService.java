@@ -12,38 +12,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
 
-        private final JwtEncoder jwtEncoder;
-        private final long expirationMinutes;
+    private final JwtEncoder jwtEncoder;
+    private final long expirationMinutes;
 
-        public JwtService(
-                        JwtEncoder jwtEncoder,
-                        JwtProperties jwtProperties) {
-                this.jwtEncoder = jwtEncoder;
-                this.expirationMinutes = jwtProperties.expirationMinutes();
-        }
+    public JwtService(JwtEncoder jwtEncoder, JwtProperties jwtProperties) {
+        this.jwtEncoder = jwtEncoder;
+        this.expirationMinutes = jwtProperties.expirationMinutes();
+    }
 
-        public String generateToken(
-                        Authentication authentication) {
-                Instant now = Instant.now();
-                String authorities = authentication
-                                .getAuthorities()
-                                .stream()
-                                .map(authority -> authority.getAuthority())
-                                .collect(Collectors.joining(" "));
+    public String generateToken(Authentication authentication) {
+        Instant now = Instant.now();
+        String authorities =
+                authentication.getAuthorities().stream()
+                        .map(authority -> authority.getAuthority())
+                        .collect(Collectors.joining(" "));
 
-                JwtClaimsSet claims = JwtClaimsSet.builder()
-                                .subject(authentication.getName())
-                                .issuedAt(now)
-                                .expiresAt(
-                                                now.plus(
-                                                                expirationMinutes,
-                                                                ChronoUnit.MINUTES))
-                                .claim("scope", authorities)
-                                .build();
+        JwtClaimsSet claims =
+                JwtClaimsSet.builder()
+                        .subject(authentication.getName())
+                        .issuedAt(now)
+                        .expiresAt(now.plus(expirationMinutes, ChronoUnit.MINUTES))
+                        .claim("scope", authorities)
+                        .build();
 
-                return jwtEncoder
-                                .encode(
-                                                JwtEncoderParameters.from(claims))
-                                .getTokenValue();
-        }
+        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
 }

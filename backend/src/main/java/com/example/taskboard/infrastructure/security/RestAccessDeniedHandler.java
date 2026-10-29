@@ -12,14 +12,11 @@ import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
 @Component
-public class RestAccessDeniedHandler
-        implements AccessDeniedHandler {
+public class RestAccessDeniedHandler implements AccessDeniedHandler {
 
     private final ObjectMapper objectMapper;
 
-    public RestAccessDeniedHandler(
-            ObjectMapper objectMapper
-    ) {
+    public RestAccessDeniedHandler(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
@@ -27,34 +24,19 @@ public class RestAccessDeniedHandler
     public void handle(
             HttpServletRequest request,
             HttpServletResponse response,
-            AccessDeniedException accessDeniedException
-    ) throws IOException {
+            AccessDeniedException accessDeniedException)
+            throws IOException {
 
-        ProblemDetail problemDetail =
-                ProblemDetail.forStatus(
-                        HttpStatus.FORBIDDEN
-                );
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
 
         problemDetail.setTitle("Forbidden");
-        problemDetail.setDetail(
-                "你沒有權限存取此資源"
-        );
-        problemDetail.setProperty(
-                "code",
-                "FORBIDDEN"
-        );
+        problemDetail.setDetail("你沒有權限存取此資源");
+        problemDetail.setProperty("code", "FORBIDDEN");
 
-        response.setStatus(
-                HttpStatus.FORBIDDEN.value()
-        );
+        response.setStatus(HttpStatus.FORBIDDEN.value());
 
-        response.setContentType(
-                MediaType.APPLICATION_PROBLEM_JSON_VALUE
-        );
+        response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
 
-        objectMapper.writeValue(
-                response.getOutputStream(),
-                problemDetail
-        );
+        objectMapper.writeValue(response.getOutputStream(), problemDetail);
     }
 }

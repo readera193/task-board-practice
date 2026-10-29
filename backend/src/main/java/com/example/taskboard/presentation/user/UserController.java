@@ -18,14 +18,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public UserResponse register(
-            @Valid @RequestBody RegisterUserRequest request
-    ) {
-        return UserResponse.from(
-                userService.register(
-                        request.username(),
-                        request.password()
-                )
-        );
+    public UserResponse register(@Valid @RequestBody RegisterUserRequest request) {
+        return UserResponse.from(userService.register(request.username(), request.password()));
     }
 }

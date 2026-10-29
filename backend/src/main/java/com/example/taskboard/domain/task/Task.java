@@ -1,10 +1,8 @@
 package com.example.taskboard.domain.task;
 
-import jakarta.persistence.*;
-
-import java.time.LocalDateTime;
-
 import com.example.taskboard.domain.user.User;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tasks")
@@ -32,8 +30,13 @@ public class Task {
 
     protected Task() {}
 
-    public Task(Long id, String title, boolean completed, LocalDateTime createdAt,
-            String description, User user) {
+    public Task(
+            Long id,
+            String title,
+            boolean completed,
+            LocalDateTime createdAt,
+            String description,
+            User user) {
         this.id = id;
         this.title = title;
         this.completed = completed;

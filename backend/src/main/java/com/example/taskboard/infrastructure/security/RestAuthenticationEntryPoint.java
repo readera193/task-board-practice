@@ -12,14 +12,11 @@ import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
 @Component
-public class RestAuthenticationEntryPoint
-        implements AuthenticationEntryPoint {
+public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final ObjectMapper objectMapper;
 
-    public RestAuthenticationEntryPoint(
-            ObjectMapper objectMapper
-    ) {
+    public RestAuthenticationEntryPoint(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
@@ -27,30 +24,19 @@ public class RestAuthenticationEntryPoint
     public void commence(
             HttpServletRequest request,
             HttpServletResponse response,
-            AuthenticationException authException
-    ) throws IOException {
+            AuthenticationException authException)
+            throws IOException {
 
-        ProblemDetail problemDetail =
-                ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
 
         problemDetail.setTitle("Unauthorized");
         problemDetail.setDetail("需要登入後才能存取此資源");
-        problemDetail.setProperty(
-                "code",
-                "UNAUTHORIZED"
-        );
+        problemDetail.setProperty("code", "UNAUTHORIZED");
 
-        response.setStatus(
-                HttpStatus.UNAUTHORIZED.value()
-        );
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-        response.setContentType(
-                MediaType.APPLICATION_PROBLEM_JSON_VALUE
-        );
+        response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
 
-        objectMapper.writeValue(
-                response.getOutputStream(),
-                problemDetail
-        );
+        objectMapper.writeValue(response.getOutputStream(), problemDetail);
     }
 }

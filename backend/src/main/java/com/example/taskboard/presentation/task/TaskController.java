@@ -1,20 +1,16 @@
 package com.example.taskboard.presentation.task;
 
-import org.springframework.data.domain.Pageable;
-
-import java.util.Set;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-
 import com.example.taskboard.application.task.TaskResult;
 import com.example.taskboard.application.task.TaskService;
 import com.example.taskboard.presentation.response.PagedResponse;
 import com.example.taskboard.shared.exception.BusinessException;
 import com.example.taskboard.shared.exception.ErrorType;
-
 import jakarta.validation.Valid;
+import java.util.Set;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +25,8 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
-            "createdAt",
-            "title",
-            "completed");
+    private static final Set<String> ALLOWED_SORT_FIELDS =
+            Set.of("createdAt", "title", "completed");
 
     private void validateSort(Pageable pageable) {
         for (Sort.Order order : pageable.getSort()) {
@@ -48,20 +42,21 @@ public class TaskController {
     @GetMapping
     public PagedResponse<TaskResult> getAll(
             Authentication authentication,
-            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
+                    Pageable pageable) {
         validateSort(pageable);
 
-        Page<TaskResult> result = taskService.getAll(
-                authentication.getName(),
-                pageable);
+        Page<TaskResult> result = taskService.getAll(authentication.getName(), pageable);
 
         return PagedResponse.from(result);
     }
 
     @PostMapping
-    public TaskResponse create(@Valid @RequestBody CreateTaskRequest request, Authentication authentication) {
+    public TaskResponse create(
+            @Valid @RequestBody CreateTaskRequest request, Authentication authentication) {
         return TaskResponse.from(
-                taskService.create(request.title(), request.description(), authentication.getName()));
+                taskService.create(
+                        request.title(), request.description(), authentication.getName()));
     }
 
     @GetMapping("/{id}")
@@ -75,7 +70,8 @@ public class TaskController {
             @Valid @RequestBody UpdateTaskRequest request,
             Authentication authentication) {
         return TaskResponse.from(
-                taskService.update(id, request.title(), request.description(), authentication.getName()));
+                taskService.update(
+                        id, request.title(), request.description(), authentication.getName()));
     }
 
     @PatchMapping("/{id}/toggle")
