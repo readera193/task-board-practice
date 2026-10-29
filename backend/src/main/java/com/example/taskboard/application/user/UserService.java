@@ -1,6 +1,7 @@
 package com.example.taskboard.application.user;
 
 import com.example.taskboard.domain.user.User;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,8 +41,11 @@ public class UserService {
                 "USER"
         );
 
-        User savedUser = userRepository.save(user);
-
-        return UserResult.from(savedUser);
+        try {
+            return UserResult.from(userRepository.save(user));
+        } catch (DataIntegrityViolationException e) {
+            // 併發註冊同一帳號時，先查後寫會漏過 existsByUsername，由 unique 約束兜底並轉成 409
+            throw UserErrors.usernameAlreadyExists();
+        }
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.data.web.PageableDefault;
 import com.example.taskboard.application.task.TaskResult;
 import com.example.taskboard.application.task.TaskService;
 import com.example.taskboard.presentation.response.PagedResponse;
+import com.example.taskboard.shared.exception.BusinessException;
+import com.example.taskboard.shared.exception.ErrorType;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -35,8 +37,10 @@ public class TaskController {
     private void validateSort(Pageable pageable) {
         for (Sort.Order order : pageable.getSort()) {
             if (!ALLOWED_SORT_FIELDS.contains(order.getProperty())) {
-                throw new IllegalArgumentException(
-                        "Unsupported sort field: " + order.getProperty());
+                throw new BusinessException(
+                        "INVALID_SORT_FIELD",
+                        "Unsupported sort field: " + order.getProperty(),
+                        ErrorType.VALIDATION);
             }
         }
     }

@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -126,15 +127,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ProblemDetail handleIllegalArgumentException(
-            IllegalArgumentException ex) {
-        ProblemDetail problem = ProblemDetail.forStatus(
-                HttpStatus.BAD_REQUEST);
-
-        problem.setTitle("Bad Request");
-        problem.setDetail(ex.getMessage());
-
-        return problem;
+    /** 授權失敗交還給 Spring Security 的 AccessDeniedHandler（回 403），避免被通用 Exception handler 吞成 500。 */
+    @ExceptionHandler(AccessDeniedException.class)
+    public void rethrowAccessDenied(AccessDeniedException exception) {
+        throw exception;
     }
 }
