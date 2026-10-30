@@ -54,6 +54,7 @@ public class TaskController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public TaskResponse create(
             @Valid @RequestBody CreateTaskRequest request, Authentication authentication) {
         return TaskResponse.from(

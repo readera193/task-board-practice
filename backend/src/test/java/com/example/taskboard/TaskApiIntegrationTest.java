@@ -43,7 +43,7 @@ class TaskApiIntegrationTest {
                                   "password": "password123"
                                 }
                                 """))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username").value("testuser"));
 
         MvcResult loginResult =
@@ -78,7 +78,7 @@ class TaskApiIntegrationTest {
                                   "title": "Integration Test Task"
                                 }
                                 """))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title").value("Integration Test Task"))
                 .andExpect(jsonPath("$.completed").value(false));
 
@@ -104,7 +104,7 @@ class TaskApiIntegrationTest {
                         post("/api/users/register")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(body))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         mockMvc.perform(
                         post("/api/users/register")
@@ -128,7 +128,7 @@ class TaskApiIntegrationTest {
                                                 """
                                 { "title": "A 的任務" }
                                 """))
-                        .andExpect(status().isOk())
+                        .andExpect(status().isCreated())
                         .andReturn();
         long taskId =
                 objectMapper
@@ -169,7 +169,7 @@ class TaskApiIntegrationTest {
                         post("/api/users/register")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(credentials))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         MvcResult login =
                 mockMvc.perform(
                                 post("/api/auth/login")
