@@ -8,6 +8,71 @@
 
 ---
 
+## 畫面預覽
+
+| 登入 | 註冊（密碼長度提示） |
+|---|---|
+| ![登入](docs/screenshots/01-login.png) | ![註冊](docs/screenshots/02-register.png) |
+
+| 任務看板 | 編輯任務 |
+|---|---|
+| ![任務看板](docs/screenshots/03-board.png) | ![編輯任務](docs/screenshots/04-edit-task.png) |
+
+## 系統架構
+
+```mermaid
+flowchart LR
+    Browser([瀏覽器<br/>React + TypeScript]) -->|"HTTPS /api/** + JWT"| Presentation
+
+    subgraph Backend["Spring Boot（單一 Docker image，同時 serve 前端靜態檔）"]
+        direction TB
+        Presentation["presentation<br/>Controller、Request/Response DTO、<br/>GlobalExceptionHandler"]
+        Application["application<br/>Service、Result DTO、<br/>Repository 介面（port）"]
+        Domain["domain<br/>Entity：Task、User、Role"]
+        Infrastructure["infrastructure<br/>Repository 實作（JPA）、Security / JWT"]
+
+        Presentation --> Application
+        Application --> Domain
+        Infrastructure -.->|實作 port| Application
+        Infrastructure --> Domain
+    end
+
+    Infrastructure --> MySQL[("MySQL 8<br/>Flyway 管理 schema")]
+```
+
+分層規則：依賴只能由外往內（presentation → application → domain）；Repository 介面放在 application，實作放在 infrastructure，因此 Service 不認識 JPA 細節（分頁型別刻意沿用 Spring Data，取捨見文末）。
+
+### 登入與 JWT 驗證
+
+```mermaid
+sequenceDiagram
+    actor U as 使用者
+    participant FE as 前端
+    participant Auth as AuthController
+    participant AM as AuthenticationManager
+    participant DB as MySQL
+    participant F as Resource Server Filter
+
+    U->>FE: 輸入帳號密碼
+    FE->>Auth: POST /api/auth/login
+    Auth->>AM: authenticate(username, password)
+    AM->>DB: 查詢使用者（CustomUserDetailsService）
+    AM->>AM: BCrypt 比對密碼
+    Auth->>Auth: JwtService 簽發 HS256 JWT（sub、scope=ROLE_USER、exp）
+    Auth-->>FE: accessToken
+
+    FE->>F: GET /api/tasks（Authorization: Bearer ...）
+    F->>F: NimbusJwtDecoder 驗證簽章與到期時間
+    F-->>FE: 通過後只回傳「自己的」任務（依 username 隔離）
+    Note over F,FE: 未帶或無效的 token → 401；其他使用者的任務 id → 404
+```
+
+## API 文件
+
+後端內建 OpenAPI（springdoc）：啟動後開啟 `/swagger-ui.html` 即可瀏覽與試用，規格在 `/v3/api-docs`。先呼叫 `POST /api/users/register` 與 `POST /api/auth/login` 取得 `accessToken`，再按右上角 **Authorize** 貼上即可。
+
+![Swagger UI](docs/screenshots/05-swagger.png)
+
 ## 技術棧
 
 **Backend**
