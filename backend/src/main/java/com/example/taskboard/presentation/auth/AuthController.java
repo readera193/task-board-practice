@@ -1,6 +1,8 @@
 package com.example.taskboard.presentation.auth;
 
 import com.example.taskboard.infrastructure.security.JwtService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "認證", description = "登入取得 JWT 與查詢目前使用者")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -23,6 +26,7 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
+    @SecurityRequirements
     @PostMapping("/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         Authentication authentication =

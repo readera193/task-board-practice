@@ -5,3 +5,5 @@
 **/.env*
 **/*.local
 backend/.mvn/jvm.config
+
+docs

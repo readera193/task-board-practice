@@ -5,6 +5,7 @@ import com.example.taskboard.application.task.TaskService;
 import com.example.taskboard.presentation.response.PagedResponse;
 import com.example.taskboard.shared.exception.BusinessException;
 import com.example.taskboard.shared.exception.ErrorType;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.Set;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "任務", description = "任務 CRUD 與完成狀態切換；只能存取自己的任務，排序欄位限 createdAt、title、completed")
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
