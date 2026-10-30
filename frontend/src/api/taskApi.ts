@@ -26,8 +26,10 @@ export interface UpdateTaskRequest {
   description?: string
 }
 
-export function getTasks(): Promise<PagedResponse<Task>> {
-  return httpClient.get<PagedResponse<Task>>('/api/tasks')
+export function getTasks(page = 0): Promise<PagedResponse<Task>> {
+  return httpClient.get<PagedResponse<Task>>(
+    `/api/tasks?page=${page}&size=20&sort=createdAt,desc`,
+  )
 }
 
 export function createTask(

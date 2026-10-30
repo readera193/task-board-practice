@@ -1,8 +1,11 @@
 package com.example.taskboard;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.Test;
@@ -135,11 +138,25 @@ class TaskApiIntegrationTest {
 
         mockMvc.perform(get("/api/tasks/" + taskId).header("Authorization", "Bearer " + tokenB))
                 .andExpect(status().isNotFound());
+        mockMvc.perform(
+                        put("/api/tasks/" + taskId)
+                                .header("Authorization", "Bearer " + tokenB)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"title\":\"unauthorized change\"}"))
+                .andExpect(status().isNotFound());
+        mockMvc.perform(
+                        patch("/api/tasks/" + taskId + "/toggle")
+                                .header("Authorization", "Bearer " + tokenB))
+                .andExpect(status().isNotFound());
+        mockMvc.perform(delete("/api/tasks/" + taskId).header("Authorization", "Bearer " + tokenB))
+                .andExpect(status().isNotFound());
         mockMvc.perform(get("/api/tasks").header("Authorization", "Bearer " + tokenB))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalElements").value(0));
         mockMvc.perform(get("/api/tasks/" + taskId).header("Authorization", "Bearer " + tokenA))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("A 的任務"))
+                .andExpect(jsonPath("$.completed").value(false));
     }
 
     private String registerAndLogin(String username) throws Exception {
