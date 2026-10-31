@@ -40,3 +40,11 @@ export function getCurrentUser(): Promise<CurrentUser> {
 export function demoLogin(): Promise<LoginResponse> {
   return httpClient.post<LoginResponse>('/api/auth/demo');
 }
+
+export interface AuthConfig {
+  demoLoginEnabled: boolean;
+}
+
+export function getAuthConfig(): Promise<AuthConfig> {
+  return httpClient.get<AuthConfig>('/api/auth/config');
+}

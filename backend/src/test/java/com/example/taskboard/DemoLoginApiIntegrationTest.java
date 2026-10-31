@@ -54,6 +54,13 @@ class DemoLoginApiIntegrationTest {
     }
 
     @Test
+    void authConfig_whenEnabled_exposesDemoLogin() throws Exception {
+        mockMvc.perform(get("/api/auth/config"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.demoLoginEnabled").value(true));
+    }
+
+    @Test
     void demoLogin_eachCallCreatesIndependentAccount() throws Exception {
         String first = usernameOf(mockMvc.perform(post("/api/auth/demo")).andReturn());
         String second = usernameOf(mockMvc.perform(post("/api/auth/demo")).andReturn());

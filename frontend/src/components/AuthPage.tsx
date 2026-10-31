@@ -4,6 +4,7 @@ import type { FormEvent } from 'react';
 import { handleError } from '../utils/handleError';
 
 interface AuthPageProps {
+  demoLoginEnabled: boolean;
   onLogin: (username: string, password: string) => Promise<void>;
   onDemoLogin: () => Promise<void>;
   onRegister: (username: string, password: string) => Promise<string>;
@@ -11,7 +12,7 @@ interface AuthPageProps {
 
 const MIN_PASSWORD_LENGTH = 8;
 
-function AuthPage({ onLogin, onDemoLogin, onRegister }: AuthPageProps) {
+function AuthPage({ demoLoginEnabled, onLogin, onDemoLogin, onRegister }: AuthPageProps) {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -108,14 +109,16 @@ function AuthPage({ onLogin, onDemoLogin, onRegister }: AuthPageProps) {
           </button>
         </form>
 
-        <button
-          type="button"
-          className="btn btn-ghost"
-          onClick={handleDemoLogin}
-          disabled={submitting}
-        >
-          Demo 體驗（免註冊）
-        </button>
+        {demoLoginEnabled && (
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={handleDemoLogin}
+            disabled={submitting}
+          >
+            Demo 體驗（免註冊）
+          </button>
+        )}
 
         <button type="button" className="btn btn-link" onClick={switchMode} disabled={submitting}>
           {isRegister ? '已經有帳號了？前往登入' : '還沒有帳號？前往註冊'}

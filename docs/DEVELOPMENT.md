@@ -71,6 +71,6 @@ Northflank API Key 等機敏資訊以 GitHub Secrets / Variables 管理。
 - **分頁型別沿用 Spring Data**：`TaskRepository`（application 層的 port）直接使用 `Page` / `Pageable`，不另建一套分頁型別；真要換掉持久化技術時再抽離。
 - **Token 存在 `localStorage`**：容易受 XSS 影響，但改用 HttpOnly Cookie 會引入 CSRF 防護，對這個規模屬過度設計。
 - **登入與註冊限流**：單一實例每分鐘每來源最多登入 20 次、註冊 10 次，合計全站最多 300 次，包含失敗嘗試；超量回應 429 與 Retry-After。可透過 AUTH_LOGIN_PER_MINUTE、AUTH_REGISTER_PER_MINUTE、AUTH_TOTAL_PER_MINUTE 調整。計數於重啟後重置，多實例應由入口平台統一限流。不直接採信 X-Forwarded-For；反向代理後可能共用來源額度，需依平台可信代理設定調整。
-- **Demo 體驗登入**：`POST /api/auth/demo` 建立隨機 `demo-xxxxxxxx` 帳號（`users.demo = true`）與 3 筆範例任務並直接回傳 JWT，密碼為不對外提供的隨機值。預設關閉，以環境變數 `DEMO_LOGIN_ENABLED=true` 啟用（dev profile 預設開啟）；超過 `app.demo-login.retention-hours`（預設 24 小時）的 Demo 帳號與其任務由每小時一次的排程清除，一般註冊的使用者不受影響。與註冊共用建立帳號的限流額度。
+- **Demo 體驗登入**：`POST /api/auth/demo` 建立隨機 `demo-xxxxxxxx` 帳號（`users.demo = true`）與 3 筆範例任務並直接回傳 JWT，密碼為不對外提供的隨機值。預設關閉，以環境變數 `DEMO_LOGIN_ENABLED=true` 啟用（dev profile 預設開啟）；超過 `app.demo-login.retention-hours`（預設 24 小時）的 Demo 帳號與其任務由每小時一次的排程清除，一般註冊的使用者不受影響。與註冊共用建立帳號的限流額度。登入頁會呼叫公開的 `GET /api/auth/config`，只有啟用時才顯示「Demo 體驗」按鈕。
 - **角色（Role）**：目前只有 `USER` 一種角色，沒有任何端點依角色授權；保留是為日後擴充預留（角色會以 `ROLE_*` 寫入 JWT 的 `scope`），移除需連帶調整 `users` 表欄位與 token 內容，成本高於保留。
 - **程式碼格式**：後端以 spotless（google-java-format AOSP 風格）檢查，`./mvnw spotless:apply` 可自動格式化。前端以 Prettier 統一格式（`npm run format`），CI 以 `npm run format:check` 檢查。

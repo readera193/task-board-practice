@@ -52,6 +52,13 @@ public class AuthController {
         return new LoginResponse(authentication.getName(), accessToken, "Bearer");
     }
 
+    /** 登入頁用的公開設定：目前只有是否顯示 Demo 體驗按鈕。 */
+    @SecurityRequirements
+    @GetMapping("/config")
+    public AuthConfigResponse config() {
+        return new AuthConfigResponse(demoLoginEnabled);
+    }
+
     /** Demo 體驗登入：免註冊，一鍵取得隨機帳號與範例任務。僅展示環境啟用，未啟用時視為不存在。 */
     @SecurityRequirements
     @PostMapping("/demo")

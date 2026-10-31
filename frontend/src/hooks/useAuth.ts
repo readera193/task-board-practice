@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import {
   demoLogin as demoLoginRequest,
+  getAuthConfig,
   getCurrentUser,
   login as loginRequest,
   register as registerRequest,
@@ -18,6 +19,7 @@ export function useAuth() {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   // 有 token 才需要先向後端確認身分；沒有 token 時直接進入登入畫面
   const [initializing, setInitializing] = useState(() => getAccessToken() !== null);
+  const [demoLoginEnabled, setDemoLoginEnabled] = useState(false);
 
   // httpClient 收到 401 會清掉 token 並發出事件，這裡同步回到未登入狀態
   useEffect(() => {
@@ -62,6 +64,13 @@ export function useAuth() {
     };
   }, []);
 
+  // 取不到設定時視為未啟用，只是不顯示 Demo 按鈕，不影響一般登入
+  useEffect(() => {
+    getAuthConfig()
+      .then((config) => setDemoLoginEnabled(config.demoLoginEnabled))
+      .catch(() => setDemoLoginEnabled(false));
+  }, []);
+
   const login = useCallback(async (username: string, password: string) => {
     const result = await loginRequest({ username, password });
 
@@ -87,5 +96,5 @@ export function useAuth() {
     setCurrentUser(null);
   }, []);
 
-  return { currentUser, initializing, login, demoLogin, register, logout };
+  return { currentUser, initializing, demoLoginEnabled, login, demoLogin, register, logout };
 }
