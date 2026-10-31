@@ -1,8 +1,11 @@
 package com.example.taskboard;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.Test;
@@ -40,7 +43,7 @@ class TaskApiIntegrationTest {
                                   "password": "password123"
                                 }
                                 """))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username").value("testuser"));
 
         MvcResult loginResult =
@@ -75,7 +78,7 @@ class TaskApiIntegrationTest {
                                   "title": "Integration Test Task"
                                 }
                                 """))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title").value("Integration Test Task"))
                 .andExpect(jsonPath("$.completed").value(false));
 
@@ -101,7 +104,7 @@ class TaskApiIntegrationTest {
                         post("/api/users/register")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(body))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         mockMvc.perform(
                         post("/api/users/register")
@@ -125,7 +128,7 @@ class TaskApiIntegrationTest {
                                                 """
                                 { "title": "A 的任務" }
                                 """))
-                        .andExpect(status().isOk())
+                        .andExpect(status().isCreated())
                         .andReturn();
         long taskId =
                 objectMapper
@@ -135,11 +138,25 @@ class TaskApiIntegrationTest {
 
         mockMvc.perform(get("/api/tasks/" + taskId).header("Authorization", "Bearer " + tokenB))
                 .andExpect(status().isNotFound());
+        mockMvc.perform(
+                        put("/api/tasks/" + taskId)
+                                .header("Authorization", "Bearer " + tokenB)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{\"title\":\"unauthorized change\"}"))
+                .andExpect(status().isNotFound());
+        mockMvc.perform(
+                        patch("/api/tasks/" + taskId + "/toggle")
+                                .header("Authorization", "Bearer " + tokenB))
+                .andExpect(status().isNotFound());
+        mockMvc.perform(delete("/api/tasks/" + taskId).header("Authorization", "Bearer " + tokenB))
+                .andExpect(status().isNotFound());
         mockMvc.perform(get("/api/tasks").header("Authorization", "Bearer " + tokenB))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalElements").value(0));
         mockMvc.perform(get("/api/tasks/" + taskId).header("Authorization", "Bearer " + tokenA))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("A 的任務"))
+                .andExpect(jsonPath("$.completed").value(false));
     }
 
     private String registerAndLogin(String username) throws Exception {
@@ -152,7 +169,7 @@ class TaskApiIntegrationTest {
                         post("/api/users/register")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(credentials))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         MvcResult login =
                 mockMvc.perform(
                                 post("/api/auth/login")
@@ -164,5 +181,13 @@ class TaskApiIntegrationTest {
                 .readTree(login.getResponse().getContentAsString())
                 .get("accessToken")
                 .asText();
+    }
+
+    @Test
+    void frameworkError_shouldAlsoCarryCode() throws Exception {
+        // 405 由 Spring MVC 產生，handleExceptionInternal 需補上 code，與業務錯誤格式一致
+        mockMvc.perform(delete("/api/auth/login"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.code").value("METHOD_NOT_ALLOWED"));
     }
 }

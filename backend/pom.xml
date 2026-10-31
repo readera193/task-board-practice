@@ -12,21 +12,8 @@
 	<groupId>com.example</groupId>
 	<artifactId>taskboard</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name />
-	<description />
-	<url />
-	<licenses>
-		<license />
-	</licenses>
-	<developers>
-		<developer />
-	</developers>
-	<scm>
-		<connection />
-		<developerConnection />
-		<tag />
-		<url />
-	</scm>
+	<name>taskboard</name>
+	<description>Task board practice: Spring Boot + React 任務看板</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>

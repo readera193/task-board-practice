@@ -1,8 +1,8 @@
 package com.example.taskboard.shared.exception;
 
-public class NotFoundException extends BusinessException {
+public class NotFoundException extends ApiException {
 
     public NotFoundException(String code, String message) {
-        super(code, message, ErrorType.NOT_FOUND);
+        super(ErrorKind.NOT_FOUND, code, message);
     }
 }

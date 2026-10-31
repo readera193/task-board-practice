@@ -217,7 +217,7 @@ class TaskControllerTest {
                                                                   "title": "Test Task"
                                                                 }
                                                                 """))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.title").value("Test Task"))
                 .andExpect(jsonPath("$.completed").value(false));

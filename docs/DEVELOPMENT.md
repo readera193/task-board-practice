@@ -70,5 +70,5 @@ Northflank API Key 等機敏資訊以 GitHub Secrets / Variables 管理。
 
 - **分頁型別沿用 Spring Data**：`TaskRepository`（application 層的 port）直接使用 `Page` / `Pageable`，不另建一套分頁型別；真要換掉持久化技術時再抽離。
 - **Token 存在 `localStorage`**：容易受 XSS 影響，但改用 HttpOnly Cookie 會引入 CSRF 防護，對這個規模屬過度設計。
-- **登入無暴力破解防護**：尚未實作登入失敗次數限制。
+- **登入與註冊限流**：單一實例每分鐘每來源最多登入 20 次、註冊 10 次，合計全站最多 300 次，包含失敗嘗試；超量回應 429 與 Retry-After。可透過 AUTH_LOGIN_PER_MINUTE、AUTH_REGISTER_PER_MINUTE、AUTH_TOTAL_PER_MINUTE 調整。計數於重啟後重置，多實例應由入口平台統一限流。不直接採信 X-Forwarded-For；反向代理後可能共用來源額度，需依平台可信代理設定調整。
 - **程式碼格式**：後端以 spotless（google-java-format AOSP 風格）檢查，`./mvnw spotless:apply` 可自動格式化。

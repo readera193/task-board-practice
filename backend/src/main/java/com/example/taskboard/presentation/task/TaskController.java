@@ -3,8 +3,8 @@ package com.example.taskboard.presentation.task;
 import com.example.taskboard.application.task.TaskResult;
 import com.example.taskboard.application.task.TaskService;
 import com.example.taskboard.presentation.response.PagedResponse;
-import com.example.taskboard.shared.exception.BusinessException;
-import com.example.taskboard.shared.exception.ErrorType;
+import com.example.taskboard.shared.exception.ApiException;
+import com.example.taskboard.shared.exception.ErrorKind;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.Set;
@@ -33,10 +33,10 @@ public class TaskController {
     private void validateSort(Pageable pageable) {
         for (Sort.Order order : pageable.getSort()) {
             if (!ALLOWED_SORT_FIELDS.contains(order.getProperty())) {
-                throw new BusinessException(
+                throw new ApiException(
+                        ErrorKind.BAD_REQUEST,
                         "INVALID_SORT_FIELD",
-                        "Unsupported sort field: " + order.getProperty(),
-                        ErrorType.VALIDATION);
+                        "Unsupported sort field: " + order.getProperty());
             }
         }
     }
@@ -54,6 +54,7 @@ public class TaskController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public TaskResponse create(
             @Valid @RequestBody CreateTaskRequest request, Authentication authentication) {
         return TaskResponse.from(
