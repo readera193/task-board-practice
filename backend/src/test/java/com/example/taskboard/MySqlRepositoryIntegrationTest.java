@@ -39,9 +39,9 @@ class MySqlRepositoryIntegrationTest {
 
     @Test
     void findAllByUserUsername_shouldWorkWithFlywayOnRealMySql() {
-        User userA = new User(null, "userA", "password", Role.USER);
+        User userA = new User(null, "userA", "password", Role.USER, false, LocalDateTime.now());
 
-        User userB = new User(null, "userB", "password", Role.USER);
+        User userB = new User(null, "userB", "password", Role.USER, false, LocalDateTime.now());
 
         entityManager.persist(userA);
         entityManager.persist(userB);

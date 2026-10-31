@@ -55,6 +55,7 @@ public class SecurityConfig {
                                                 "/icons.svg",
                                                 "/api/users/register",
                                                 "/api/auth/login",
+                                                "/api/auth/demo",
                                                 "/actuator/health",
                                                 "/v3/api-docs/**",
                                                 "/swagger-ui.html",

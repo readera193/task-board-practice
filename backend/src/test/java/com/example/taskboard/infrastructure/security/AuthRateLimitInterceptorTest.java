@@ -48,6 +48,13 @@ class AuthRateLimitInterceptorTest {
     }
 
     @Test
+    void demoLoginUsesAccountCreationLimitSeparateFromLogin() throws Exception {
+        mvc.perform(post("/api/auth/demo")).andExpect(status().isOk());
+        mvc.perform(post("/api/auth/demo")).andExpect(status().isTooManyRequests());
+        mvc.perform(post("/api/auth/login")).andExpect(status().isOk());
+    }
+
+    @Test
     void globalLimitBoundsRequestsFromManySources() throws Exception {
         for (int i = 0; i < 4; i++) {
             final String address = "192.0.2." + i;
@@ -72,7 +79,7 @@ class AuthRateLimitInterceptorTest {
 
     @RestController
     static class Probe {
-        @PostMapping({"/api/auth/login", "/api/users/register"})
+        @PostMapping({"/api/auth/login", "/api/auth/demo", "/api/users/register"})
         String authenticate() {
             return "ok";
         }

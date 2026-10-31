@@ -28,7 +28,7 @@ class JpaTaskRepositoryTest {
 
     @Test
     void findByIdAndUserUsername_whenOwnerMatches_shouldReturnTask() {
-        User user = new User(null, "testuser", "password", Role.USER);
+        User user = new User(null, "testuser", "password", Role.USER, false, LocalDateTime.now());
 
         entityManager.persist(user);
 
@@ -46,9 +46,10 @@ class JpaTaskRepositoryTest {
 
     @Test
     void findByIdAndUserUsername_whenOwnerDoesNotMatch_shouldReturnEmpty() {
-        User owner = new User(null, "owner", "password", Role.USER);
+        User owner = new User(null, "owner", "password", Role.USER, false, LocalDateTime.now());
 
-        User anotherUser = new User(null, "another", "password", Role.USER);
+        User anotherUser =
+                new User(null, "another", "password", Role.USER, false, LocalDateTime.now());
 
         entityManager.persist(owner);
         entityManager.persist(anotherUser);
@@ -67,9 +68,9 @@ class JpaTaskRepositoryTest {
 
     @Test
     void findAllByUserUsername_shouldReturnOnlyOwnerTasksWithPaginationAndSorting() {
-        User userA = new User(null, "userA", "password", Role.USER);
+        User userA = new User(null, "userA", "password", Role.USER, false, LocalDateTime.now());
 
-        User userB = new User(null, "userB", "password", Role.USER);
+        User userB = new User(null, "userB", "password", Role.USER, false, LocalDateTime.now());
 
         entityManager.persist(userA);
         entityManager.persist(userB);
