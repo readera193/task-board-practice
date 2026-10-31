@@ -184,6 +184,16 @@ class TaskApiIntegrationTest {
     }
 
     @Test
+    void demoLogin_whenDisabledByDefault_shouldBeHiddenAndNotFound() throws Exception {
+        mockMvc.perform(get("/api/auth/config"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.demoLoginEnabled").value(false));
+        mockMvc.perform(post("/api/auth/demo"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("DEMO_LOGIN_DISABLED"));
+    }
+
+    @Test
     void frameworkError_shouldAlsoCarryCode() throws Exception {
         // 405 由 Spring MVC 產生，handleExceptionInternal 需補上 code，與業務錯誤格式一致
         mockMvc.perform(delete("/api/auth/login"))

@@ -48,7 +48,7 @@ class TaskServiceTest {
 
     @Test
     void getById_whenTaskExists_shouldReturnTaskResult() {
-        User user = new User(1L, "testuser", "password", Role.USER);
+        User user = new User(1L, "testuser", "password", Role.USER, false, LocalDateTime.now());
 
         LocalDateTime createdAt = LocalDateTime.of(2026, 9, 23, 9, 0);
 
@@ -81,7 +81,7 @@ class TaskServiceTest {
 
     @Test
     void create_whenUserExists_shouldCreateTaskForUser() {
-        User user = new User(1L, "testuser", "password", Role.USER);
+        User user = new User(1L, "testuser", "password", Role.USER, false, LocalDateTime.now());
 
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
 
@@ -121,7 +121,7 @@ class TaskServiceTest {
 
     @Test
     void toggle_whenTaskExists_shouldToggleCompleted() {
-        User user = new User(1L, "testuser", "password", Role.USER);
+        User user = new User(1L, "testuser", "password", Role.USER, false, LocalDateTime.now());
 
         Task task = new Task(1L, "Test Task", false, LocalDateTime.now(), null, user);
 
@@ -150,7 +150,7 @@ class TaskServiceTest {
 
     @Test
     void update_whenTaskExists_shouldUpdateTitleAndDescription() {
-        User user = new User(1L, "testuser", "password", Role.USER);
+        User user = new User(1L, "testuser", "password", Role.USER, false, LocalDateTime.now());
 
         Task task = new Task(1L, "Old Title", false, LocalDateTime.now(), "Old Description", user);
 
@@ -181,7 +181,7 @@ class TaskServiceTest {
 
     @Test
     void delete_whenTaskExists_shouldDeleteTask() {
-        User user = new User(1L, "testuser", "password", Role.USER);
+        User user = new User(1L, "testuser", "password", Role.USER, false, LocalDateTime.now());
 
         Task task = new Task(1L, "Test Task", false, LocalDateTime.now(), null, user);
 
@@ -210,7 +210,7 @@ class TaskServiceTest {
 
     @Test
     void getAll_shouldMapResultsAndPreservePaginationMetadata() {
-        User user = new User(1L, "testuser", "password", Role.USER);
+        User user = new User(1L, "testuser", "password", Role.USER, false, LocalDateTime.now());
 
         Task task1 = new Task(3L, "Task 3", false, LocalDateTime.now(), null, user);
 

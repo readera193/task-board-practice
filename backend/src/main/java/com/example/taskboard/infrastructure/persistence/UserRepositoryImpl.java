@@ -2,6 +2,7 @@ package com.example.taskboard.infrastructure.persistence;
 
 import com.example.taskboard.application.user.UserRepository;
 import com.example.taskboard.domain.user.User;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
@@ -27,5 +28,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean existsByUsername(String username) {
         return jpaUserRepository.existsByUsername(username);
+    }
+
+    @Override
+    public int deleteDemoUsersCreatedBefore(LocalDateTime cutoff) {
+        return jpaUserRepository.deleteDemoUsersCreatedBefore(cutoff);
     }
 }
