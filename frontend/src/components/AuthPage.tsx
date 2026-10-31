@@ -1,50 +1,50 @@
-import { useRef, useState } from 'react'
-import type { FormEvent } from 'react'
+import { useRef, useState } from 'react';
+import type { FormEvent } from 'react';
 
-import { handleError } from '../utils/handleError'
+import { handleError } from '../utils/handleError';
 
 interface AuthPageProps {
-  onLogin: (username: string, password: string) => Promise<void>
-  onRegister: (username: string, password: string) => Promise<string>
+  onLogin: (username: string, password: string) => Promise<void>;
+  onRegister: (username: string, password: string) => Promise<string>;
 }
 
-const MIN_PASSWORD_LENGTH = 8
+const MIN_PASSWORD_LENGTH = 8;
 
 function AuthPage({ onLogin, onRegister }: AuthPageProps) {
-  const [mode, setMode] = useState<'login' | 'register'>('login')
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-  const working = useRef(false)
+  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const working = useRef(false);
 
-  const isRegister = mode === 'register'
+  const isRegister = mode === 'register';
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    if (working.current) return
-    working.current = true
-    setSubmitting(true)
+    event.preventDefault();
+    if (working.current) return;
+    working.current = true;
+    setSubmitting(true);
 
     try {
       if (isRegister) {
-        await onRegister(username.trim(), password)
-        setPassword('')
-        setMode('login')
-        alert('註冊成功，請登入')
+        await onRegister(username.trim(), password);
+        setPassword('');
+        setMode('login');
+        alert('註冊成功，請登入');
       } else {
-        await onLogin(username.trim(), password)
+        await onLogin(username.trim(), password);
       }
     } catch (error) {
-      handleError(error)
+      handleError(error);
     } finally {
-      working.current = false
-      setSubmitting(false)
+      working.current = false;
+      setSubmitting(false);
     }
   }
 
   function switchMode() {
-    setPassword('')
-    setMode(isRegister ? 'login' : 'register')
+    setPassword('');
+    setMode(isRegister ? 'login' : 'register');
   }
 
   return (
@@ -83,9 +83,7 @@ function AuthPage({ onLogin, onRegister }: AuthPageProps) {
               onChange={(event) => setPassword(event.target.value)}
             />
             {isRegister && (
-              <small className="field-hint">
-                密碼長度至少 {MIN_PASSWORD_LENGTH} 個字元
-              </small>
+              <small className="field-hint">密碼長度至少 {MIN_PASSWORD_LENGTH} 個字元</small>
             )}
           </div>
 
@@ -99,7 +97,7 @@ function AuthPage({ onLogin, onRegister }: AuthPageProps) {
         </button>
       </div>
     </main>
-  )
+  );
 }
 
-export default AuthPage
+export default AuthPage;

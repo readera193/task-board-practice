@@ -1,25 +1,25 @@
-import { useState } from 'react'
-import type { FormEvent } from 'react'
+import { useState } from 'react';
+import type { FormEvent } from 'react';
 
 interface TaskFormProps {
-  disabled: boolean
-  onCreate: (title: string, description: string) => Promise<boolean>
+  disabled: boolean;
+  onCreate: (title: string, description: string) => Promise<boolean>;
 }
 
 function TaskForm({ onCreate, disabled }: TaskFormProps) {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
+    event.preventDefault();
 
     if (disabled || !title.trim()) {
-      return
+      return;
     }
 
     if (await onCreate(title, description)) {
-      setTitle('')
-      setDescription('')
+      setTitle('');
+      setDescription('');
     }
   }
 
@@ -48,7 +48,7 @@ function TaskForm({ onCreate, disabled }: TaskFormProps) {
         新增
       </button>
     </form>
-  )
+  );
 }
 
-export default TaskForm
+export default TaskForm;
