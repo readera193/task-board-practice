@@ -182,4 +182,12 @@ class TaskApiIntegrationTest {
                 .get("accessToken")
                 .asText();
     }
+
+    @Test
+    void frameworkError_shouldAlsoCarryCode() throws Exception {
+        // 405 由 Spring MVC 產生，handleExceptionInternal 需補上 code，與業務錯誤格式一致
+        mockMvc.perform(delete("/api/auth/login"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.code").value("METHOD_NOT_ALLOWED"));
+    }
 }

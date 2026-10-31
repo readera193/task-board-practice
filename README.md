@@ -75,7 +75,7 @@ sequenceDiagram
 
 ## 練習重點
 
-1. **分層架構**：presentation / application / domain / infrastructure 單向依賴；DTO 與 Entity 分離、Repository 介面與實作分離、統一例外處理（`GlobalExceptionHandler` + `BusinessException`）。
+1. **分層架構**：presentation / application / domain / infrastructure 單向依賴；DTO 與 Entity 分離、Repository 介面與實作分離、統一例外處理（`GlobalExceptionHandler` + `ApiException`）。
 2. **JWT 驗證**：Spring Security OAuth2 Resource Server + 自簽 HMAC（`NimbusJwtEncoder` / `NimbusJwtDecoder`）、BCrypt、Stateless session，401 / 403 統一回傳 JSON；角色以 `scope` claim 攜帶。
 3. **Flyway 遷移**：`V1` ~ `V4` 記錄表結構演進，不手動改 schema。
 4. **測試分層**：Unit → JPA slice → Web slice → Full integration → Testcontainers（真 MySQL），各層只驗證自己最有價值的範圍（見 [`backend/TESTING.md`](backend/TESTING.md)）。

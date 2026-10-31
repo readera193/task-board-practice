@@ -1,10 +1,12 @@
 package com.example.taskboard.presentation.exception;
 
-import com.example.taskboard.shared.exception.BusinessException;
+import com.example.taskboard.shared.exception.ApiException;
+import com.example.taskboard.shared.exception.ErrorKind;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,14 +28,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(BusinessException.class)
-    public ProblemDetail handleBusinessException(BusinessException exception) {
-        HttpStatus status =
-                switch (exception.getType()) {
-                    case VALIDATION -> HttpStatus.BAD_REQUEST;
-                    case NOT_FOUND -> HttpStatus.NOT_FOUND;
-                    case CONFLICT -> HttpStatus.CONFLICT;
-                };
+    @ExceptionHandler(ApiException.class)
+    public ProblemDetail handleApiException(ApiException exception) {
+        HttpStatus status = toStatus(exception.getKind());
 
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
 
@@ -127,6 +125,46 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetail.setProperty("code", "INVALID_CREDENTIALS");
 
         return problemDetail;
+    }
+
+    /** 所有經由父類別處理的 Spring MVC 例外（404、405 等），若尚無 code 則依狀態碼補上，確保回應格式一致。 */
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(
+            Exception exception,
+            Object body,
+            HttpHeaders headers,
+            HttpStatusCode statusCode,
+            WebRequest request) {
+        // 父類別對 Spring MVC 例外傳入 body=null，這裡先取得框架產生的 ProblemDetail 再補欄位
+        if (body == null && exception instanceof ErrorResponse errorResponse) {
+            body =
+                    errorResponse.updateAndGetBody(
+                            getMessageSource(), LocaleContextHolder.getLocale());
+        }
+        if (body instanceof ProblemDetail problem
+                && (problem.getProperties() == null
+                        || !problem.getProperties().containsKey("code"))) {
+            problem.setProperty("code", defaultCode(statusCode));
+        }
+        return super.handleExceptionInternal(exception, body, headers, statusCode, request);
+    }
+
+    private static String defaultCode(HttpStatusCode statusCode) {
+        HttpStatus resolved = HttpStatus.resolve(statusCode.value());
+        return resolved != null ? resolved.name() : "ERROR";
+    }
+
+    private static HttpStatus toStatus(ErrorKind kind) {
+        return switch (kind) {
+            case BAD_REQUEST -> HttpStatus.BAD_REQUEST;
+            case UNAUTHORIZED -> HttpStatus.UNAUTHORIZED;
+            case FORBIDDEN -> HttpStatus.FORBIDDEN;
+            case NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case CONFLICT -> HttpStatus.CONFLICT;
+            case GONE -> HttpStatus.GONE;
+            case TOO_MANY_REQUESTS -> HttpStatus.TOO_MANY_REQUESTS;
+            case INTERNAL -> HttpStatus.INTERNAL_SERVER_ERROR;
+        };
     }
 
     /** 授權失敗交還給 Spring Security 的 AccessDeniedHandler（回 403），避免被通用 Exception handler 吞成 500。 */
