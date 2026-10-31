@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-/** 單實例 Demo 的登入與註冊限流；全站上限也限制來源計數的記憶體用量。 */
+/** 單實例 Demo 的登入、註冊與 Demo 體驗登入限流；全站上限也限制來源計數的記憶體用量。 */
 @Component
 public class AuthRateLimitInterceptor implements HandlerInterceptor {
     private static final long WINDOW_MILLIS = 60_000;
@@ -50,7 +50,10 @@ public class AuthRateLimitInterceptor implements HandlerInterceptor {
         String path = request.getServletPath();
         if (path.isEmpty()) path = request.getRequestURI();
         boolean login = "/api/auth/login".equals(path);
-        if (!login && !"/api/users/register".equals(path)) return true;
+        // Demo 登入與註冊同樣會建立帳號，共用較嚴格的建立帳號上限
+        if (!login && !"/api/users/register".equals(path) && !"/api/auth/demo".equals(path)) {
+            return true;
+        }
 
         long now = clock.millis();
         if (now - windowStart >= WINDOW_MILLIS) {

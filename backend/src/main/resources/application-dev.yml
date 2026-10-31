@@ -12,3 +12,7 @@ spring:
       max-lifetime: 1800000
   jpa:
     show-sql: true
+
+app:
+  demo-login:
+    enabled: ${DEMO_LOGIN_ENABLED:true}

@@ -2,6 +2,7 @@ package com.example.taskboard.infrastructure.persistence;
 
 import com.example.taskboard.application.task.TaskRepository;
 import com.example.taskboard.domain.task.Task;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,5 +35,10 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     public void delete(Task task) {
         jpaTaskRepository.delete(task);
+    }
+
+    @Override
+    public int deleteOfDemoUsersCreatedBefore(LocalDateTime cutoff) {
+        return jpaTaskRepository.deleteOfDemoUsersCreatedBefore(cutoff);
     }
 }

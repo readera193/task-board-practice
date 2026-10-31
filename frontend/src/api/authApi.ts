@@ -36,3 +36,15 @@ export function register(request: RegisterRequest): Promise<RegisterResponse> {
 export function getCurrentUser(): Promise<CurrentUser> {
   return httpClient.get<CurrentUser>('/api/auth/me');
 }
+
+export function demoLogin(): Promise<LoginResponse> {
+  return httpClient.post<LoginResponse>('/api/auth/demo');
+}
+
+export interface AuthConfig {
+  demoLoginEnabled: boolean;
+}
+
+export function getAuthConfig(): Promise<AuthConfig> {
+  return httpClient.get<AuthConfig>('/api/auth/config');
+}

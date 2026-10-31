@@ -1,6 +1,7 @@
 package com.example.taskboard.application.task;
 
 import com.example.taskboard.domain.task.Task;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,4 +19,7 @@ public interface TaskRepository {
     Task save(Task task);
 
     void delete(Task task);
+
+    /** 刪除建立時間早於 cutoff 的 Demo 帳號所擁有的任務，回傳刪除筆數。 */
+    int deleteOfDemoUsersCreatedBefore(LocalDateTime cutoff);
 }

@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,16 +32,30 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(nullable = false)
+    private boolean demo;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
     @OneToMany(mappedBy = "user")
     private List<Task> tasks = new ArrayList<>();
 
     protected User() {}
 
-    public User(Long id, String username, String password, Role role) {
+    public User(
+            Long id,
+            String username,
+            String password,
+            Role role,
+            boolean demo,
+            LocalDateTime createdAt) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
+        this.demo = demo;
+        this.createdAt = createdAt;
     }
 
     public Long getId() {
@@ -57,5 +72,13 @@ public class User {
 
     public Role getRole() {
         return role;
+    }
+
+    public boolean isDemo() {
+        return demo;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }
