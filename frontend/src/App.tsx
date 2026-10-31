@@ -5,14 +5,14 @@ import { useAuth } from './hooks/useAuth';
 import './App.css';
 
 function App() {
-  const { currentUser, initializing, login, register, logout } = useAuth();
+  const { currentUser, initializing, login, demoLogin, register, logout } = useAuth();
 
   if (initializing) {
     return <div className="loading-screen">載入中...</div>;
   }
 
   if (!currentUser) {
-    return <AuthPage onLogin={login} onRegister={register} />;
+    return <AuthPage onLogin={login} onDemoLogin={demoLogin} onRegister={register} />;
   }
 
   return <TaskBoard currentUser={currentUser} onLogout={logout} />;

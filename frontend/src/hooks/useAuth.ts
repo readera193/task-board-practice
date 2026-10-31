@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { getCurrentUser, login as loginRequest, register as registerRequest } from '../api/authApi';
+import {
+  demoLogin as demoLoginRequest,
+  getCurrentUser,
+  login as loginRequest,
+  register as registerRequest,
+} from '../api/authApi';
 import {
   clearAccessToken,
   getAccessToken,
@@ -64,6 +69,13 @@ export function useAuth() {
     setCurrentUser(result.username);
   }, []);
 
+  const demoLogin = useCallback(async () => {
+    const result = await demoLoginRequest();
+
+    setAccessToken(result.accessToken);
+    setCurrentUser(result.username);
+  }, []);
+
   const register = useCallback(async (username: string, password: string) => {
     const result = await registerRequest({ username, password });
 
@@ -75,5 +87,5 @@ export function useAuth() {
     setCurrentUser(null);
   }, []);
 
-  return { currentUser, initializing, login, register, logout };
+  return { currentUser, initializing, login, demoLogin, register, logout };
 }
